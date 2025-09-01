@@ -1,21 +1,22 @@
 // app/(routes)/main/page.tsx
 import HeroCarousel from "./components/HeroCarousel";
-import PopularCatgories from "./components/PopularCatgories";
 import WhyChooseUs from "./components/WhyChooseUs";
-import TheBest from "./components/TheBest";
-import Collection from "./components/Collection";
-import TopPick from "./components/TopPick";
 import BlogsSection from "./components/BlogsSection";
+import GymAboutSection from "./components/GymAboutSection";
+import GymFolioClasses from "./components/GymFolioClasses";
+import GymfolioGallery from "./components/GymfolioGallery";
+import GymTrainersSection from "./components/GymTrainersSection";
 
 export default function MainPage() {
   return (
     <main className="pt-20">
       <HeroCarousel />
-      <PopularCatgories />
+      <GymAboutSection />
       <WhyChooseUs />
-      <TheBest />
-      <Collection />
-      <TopPick />
+      <GymFolioClasses />
+      <GymfolioGallery />
+      <GymTrainersSection />
+      
       <BlogsSection />
     </main>
   );

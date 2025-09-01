@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FaShoppingCart, FaHeart, FaArrowRight, FaBars, FaTimes } from "react-icons/fa";
+import { FaArrowRight, FaBars, FaTimes } from "react-icons/fa";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { getCurrentUser, removeToken } from "@/helper/helper";
 
@@ -27,26 +27,25 @@ const Header = () => {
 
   // Only routes that exist
   const routes = {
-    shop: "/main",
-    men: "/mens-wear",
-    women: "/women-wear",
-    blogs: "/blogs",
-    contact: "/contact-us",
-    about: "/about-us",
-    wishlist: "/wishlist",
-    cart: "/cart",
-    auth: "/authentication",
     home: "/",
+    about: "/about-us",
+    packages: "/packages",
+    classes: "/classes",
+    trainers: "/trainers",
+    contact: "/contact-us",
+    blogs: "/blogs",
+    auth: "/authentication",
     userDetails: "/user-detail",
   };
 
   const navItems = [
-    { key: "shop", label: "Shop", href: routes.shop },
-    { key: "men", label: "Men", href: routes.men },
-    { key: "women", label: "Women", href: routes.women },
-    { key: "blogs", label: "Blog", href: routes.blogs },
-    { key: "contact", label: "Contact", href: routes.contact },
-    { key: "about", label: "About", href: routes.about },
+    { key: "home", label: "Home", href: routes.home },
+    { key: "about", label: "About Us", href: routes.about },
+    { key: "packages", label: "Packages", href: routes.packages },
+    { key: "classes", label: "Our Classes", href: routes.classes },
+    { key: "trainers", label: "Our Trainers", href: routes.trainers },
+    { key: "contact", label: "Contact Us", href: routes.contact },
+    { key: "blogs", label: "Blogs", href: routes.blogs },
   ];
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
@@ -85,32 +84,6 @@ const Header = () => {
 
         {/* Right Section */}
         <div className="right-section">
-          <Link
-            href={routes.wishlist}
-            className="icon-button relative"
-            aria-label="Wishlist"
-            title="View Wishlist"
-            onClick={closeMobileMenu}
-          >
-            <FaHeart size={20} aria-hidden="true" />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-              0
-            </span>
-          </Link>
-
-          <Link
-            href={routes.cart}
-            className="icon-button relative"
-            aria-label="Shopping Cart"
-            title="View Cart"
-            onClick={closeMobileMenu}
-          >
-            <FaShoppingCart size={20} aria-hidden="true" />
-            <span className="absolute -top-2 -right-2 bg-green-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-              2
-            </span>
-          </Link>
-
           {getCurrentUser() ? (
             <>
               <Link
@@ -134,12 +107,12 @@ const Header = () => {
             </>
           ) : (
             <Link
-              href={routes.auth}
+              href={routes.contact}
               className="cta-button for-mobile hidden md:flex"
-              aria-label="Sign In or Sign Up"
+              aria-label="Contact Us"
               onClick={closeMobileMenu}
             >
-              <span className="cta-text">Sign In / Sign Up</span>
+              <span className="cta-text">Contact Us</span>
               <FaArrowRight size={15} aria-hidden="true" className="text-black" />
             </Link>
           )}
@@ -169,20 +142,6 @@ const Header = () => {
                 </Link>
               </li>
             ))}
-
-            {/* Quick links */}
-            <li className="mobile-nav-item mt-3" role="none">
-              <Link href={routes.wishlist} className="mobile-nav-link" role="menuitem" onClick={closeMobileMenu}>
-                <i className="far fa-heart mr-2" />
-                Wishlist
-              </Link>
-            </li>
-            <li className="mobile-nav-item" role="none">
-              <Link href={routes.cart} className="mobile-nav-link" role="menuitem" onClick={closeMobileMenu}>
-                <i className="fas fa-shopping-cart mr-2" />
-                Cart
-              </Link>
-            </li>
           </ul>
 
           <div className="mt-6 pt-6 border-t border-gray-700">
@@ -209,12 +168,12 @@ const Header = () => {
               </>
             ) : (
               <Link
-                href={routes.auth}
+                href={routes.contact}
                 className="cta-button w-full justify-center"
-                aria-label="Sign In or Sign Up"
+                aria-label="Contact Us"
                 onClick={closeMobileMenu}
               >
-                <span className="cta-text">Sign In / Sign Up</span>
+                <span className="cta-text">Contact Us</span>
                 <FaArrowRight size={15} aria-hidden="true" className="text-black" />
               </Link>
             )}

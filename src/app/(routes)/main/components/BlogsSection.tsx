@@ -13,13 +13,13 @@ const BlogsSection: React.FC = () => {
       >
         <div className="section7-context">
           <div className="section7-header">
-            <Link href="/blogs" className="section7-badge">
+            <p  className="section7-badge">
               <div className="section7-icon"></div>
               <div className="section7-text">Fitness Tips</div>
-            </Link>
-            <Link href="/blogs" className="section7-read-for-been-update">
+            </p>
+            <p  className="section7-read-for-been-update">
               Stay Fit Stay Strong
-            </Link>
+            </p>
           </div>
         </div>
 

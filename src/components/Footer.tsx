@@ -11,7 +11,7 @@ const Footer = () => (
       <section className="footer-newsletter-section">
         <div className="footer-newsletter-content">
           <div className="footer-newsletter-text">
-            <h2 className="footer-main-heading">BECOME A PART OF THE PACK</h2>
+            <h2 className="footer-main-heading">JOIN THE FITNESS COMMUNITY</h2>
             <form className="footer-email-form" onSubmit={(e) => e.preventDefault()}>
               <div className="footer-input-wrapper">
                 <input
@@ -50,7 +50,7 @@ const Footer = () => (
                   width={100}
                   height={100}
                   src="/images/logo.png"
-                  alt="Company Logo"
+                  alt="Gymfolio Logo"
                   className="footer-logo-image"
                 />
               </Link>
@@ -59,13 +59,14 @@ const Footer = () => (
 
           {/* Columns */}
           <div className="footer-links-content">
-            {/* Shop */}
+            {/* Programs */}
             <div className="footer-links-column">
-              <h4 className="footer-column-heading">Shop</h4>
+              <h4 className="footer-column-heading">Programs</h4>
               <nav className="footer-nav-links">
-                <Link href="/mens-wear" className="footer-nav-link">Men</Link>
-                <Link href="/women-wear" className="footer-nav-link">Women</Link>
-                <Link href="/main" className="footer-nav-link">Shop All</Link>
+                <Link href="/packages" className="footer-nav-link">Packages</Link>
+                <Link href="/our-classes" className="footer-nav-link">Our Classes</Link>
+                <Link href="/class-detail" className="footer-nav-link">Class Details</Link>
+                <Link href="/our-trainers" className="footer-nav-link">Our Trainers</Link>
               </nav>
             </div>
 
@@ -73,22 +74,21 @@ const Footer = () => (
             <div className="footer-links-column">
               <h4 className="footer-column-heading">Support</h4>
               <nav className="footer-nav-links">
-                <Link href="/contact-us" className="footer-nav-link">Help Center</Link>
-                <Link href="/order-detail" className="footer-nav-link">Track My Order</Link>
+                <Link href="/contact-us" className="footer-nav-link">Contact Us</Link>
+                <Link href="/trainer-detail" className="footer-nav-link">Trainer Details</Link>
                 <Link href="/faqs" className="footer-nav-link">FAQs</Link>
                 <Link href="/blogs" className="footer-nav-link">Blogs</Link>
               </nav>
             </div>
 
-            {/* Account */}
+            {/* Company */}
             <div className="footer-links-column">
-              <h4 className="footer-column-heading">Account</h4>
+              <h4 className="footer-column-heading">Company</h4>
               <nav className="footer-nav-links">
-                <Link href="/authentication" className="footer-nav-link">Sign In / Register</Link>
-                <Link href="/user-detail" className="footer-nav-link">My Account</Link>
-                <Link href="/wishlist" className="footer-nav-link">Wishlist</Link>
-                <Link href="/cart" className="footer-nav-link">Cart</Link>
-                <Link href="/checkout" className="footer-nav-link">Checkout</Link>
+                <Link href="/about-us" className="footer-nav-link">About Us</Link>
+                <Link href="/privacy-policy" className="footer-nav-link">Privacy Policy</Link>
+                <Link href="/terms-and-conditions" className="footer-nav-link">Terms & Conditions</Link>
+                <Link href="/contact-us" className="footer-nav-link">Get In Touch</Link>
               </nav>
             </div>
 
@@ -120,13 +120,13 @@ const Footer = () => (
               <span className="footer-copyright-symbol">©</span>
               <span className="footer-copyright-year">2025</span>
               <span className="footer-copyright-text">
-                SunLink INC — All rights reserved
+                Gymfolio Fitness — All rights reserved
               </span>
             </p>
             <nav className="footer-legal-links">
               <Link href="/privacy-policy" className="footer-legal-link">Privacy Policy</Link>
               <Link href="/faqs" className="footer-legal-link">FAQs</Link>
-              <Link href="/contact-us" className="footer-legal-link">Help Center</Link>
+              <Link href="/contact-us" className="footer-legal-link">Contact Us</Link>
             </nav>
           </div>
         </div>

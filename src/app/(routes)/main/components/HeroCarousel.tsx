@@ -4,25 +4,25 @@ import Link from "next/link";
 
 const slides = [
   {
-    heading: "Discover Premium Fashion",
+    heading: "Transform Your Body",
     description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
+      "Join our state-of-the-art fitness center and experience personalized training programs designed to help you achieve your fitness goals. Our expert trainers and modern equipment will guide you on your journey to a healthier, stronger you.",
     bgImage: "/images/hero.svg",
-    ariaLabel: "Premium fashion background",
+    ariaLabel: "Fitness training background",
   },
   {
-    heading: "Latest Summer Collection",
+    heading: "Expert Personal Training",
     description:
-      "Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.",
+      "Work with certified personal trainers who will create customized workout plans tailored to your fitness level and goals. From strength training to cardio workouts, we'll help you maximize your potential and see real results.",
     bgImage: "/images/hero.svg",
-    ariaLabel: "Summer collection background",
+    ariaLabel: "Personal training background",
   },
   {
-    heading: "Exclusive Designer Wear",
+    heading: "Premium Fitness Experience",
     description:
-      "Cras dapibus vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.",
+      "Experience our world-class facilities with cutting-edge equipment, spacious workout areas, and a motivating atmosphere. Whether you're a beginner or advanced athlete, we have everything you need to succeed on your fitness journey.",
     bgImage: "/images/hero.svg",
-    ariaLabel: "Designer wear background",
+    ariaLabel: "Premium gym facility background",
   },
 ];
 
@@ -60,7 +60,7 @@ const HeroCarousel: React.FC = () => {
       id="hero"
       className="hero-section relative overflow-hidden"
       role="banner"
-      aria-label="Fashion showcase carousel"
+      aria-label="Fitness showcase carousel"
     >
       <div className="hero-carousel relative" id="hero-carousel">
         {slides.map((slide, idx) => (
@@ -85,23 +85,14 @@ const HeroCarousel: React.FC = () => {
                     <h1 className="hero-heading">{slide.heading}</h1>
                     <p className="hero-description">{slide.description}</p>
                   </header>
-                  <nav className="hero-buttons" aria-label="Shop categories">
+                  <nav className="hero-buttons" aria-label="Get started">
                     <Link
-                      href="/mens-wear"
+                      href="/contact-us"
                       className="hero-cta-button"
                       role="button"
-                      aria-label="Shop men's collection"
+                      aria-label="Contact us to get started"
                     >
-                      <span className="hero-cta-text">Shop Men</span>
-                      <i className="fas fa-arrow-right" aria-hidden="true"></i>
-                    </Link>
-                    <Link
-                      href="/women-wear"
-                      className="hero-cta-button"
-                      role="button"
-                      aria-label="Shop women's collection"
-                    >
-                      <span className="hero-cta-text">Shop Women</span>
+                      <span className="hero-cta-text">Contact Us</span>
                       <i className="fas fa-arrow-right" aria-hidden="true"></i>
                     </Link>
                   </nav>
