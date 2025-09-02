@@ -4864,7 +4864,6 @@ html {
   font-family: "Montserrat", sans-serif;
 }
 
-
 .gymfolio7-green-dot {
   background-color: #6c8704;
 }
@@ -4917,4 +4916,110 @@ html {
 
 .gymfolio7-trainer-card:hover .gymfolio7-trainer-card-overlay {
   opacity: 1;
+}
+
+.gymfolio8-font-sora {
+  font-family: "Sora", sans-serif;
+}
+
+.gymfolio8-font-montserrat {
+  font-family: "Montserrat", sans-serif;
+}
+
+.gymfolio8-font-poppins {
+  font-family: "Poppins", sans-serif;
+}
+
+.gymfolio8-font-manrope {
+  font-family: "Manrope", sans-serif;
+}
+
+.gymfolio8-contact-bg {
+  background-color: #feffe5;
+}
+
+.gymfolio8-green-dot {
+  background-color: #6c8704;
+}
+
+.gymfolio8-green-text {
+  color: #6c8704;
+}
+
+.gymfolio8-gray-text {
+  color: #85868b;
+}
+
+.gymfolio8-dark-gray-text {
+  color: #4d4d51;
+}
+
+.gymfolio8-form-text {
+  color: #181b20;
+}
+
+.gymfolio8-form-container {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1.5px solid rgba(255, 255, 255, 1);
+  backdrop-filter: blur(12px);
+}
+
+.gymfolio8-form-input {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #cfd0d2;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  transition: all 0.3s ease;
+}
+
+.gymfolio8-form-input:focus {
+  outline: none;
+  border-color: #6c8704;
+  box-shadow: 0 0 0 3px rgba(108, 135, 4, 0.1);
+}
+
+.gymfolio8-contact-button {
+  background: #bee304;
+  box-shadow: 4px 4px 12px 0px rgba(0, 132, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.gymfolio8-contact-button:hover {
+  background: #a8d003;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 16px 0px rgba(0, 132, 255, 0.35);
+}
+
+.gymfolio8-contact-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.gymfolio8-contact-button:disabled:hover {
+  transform: none;
+  background: #bee304;
+}
+
+.gymfolio8-arrow-icon {
+  transition: transform 0.3s ease;
+}
+
+.gymfolio8-contact-button:hover .gymfolio8-arrow-icon {
+  transform: translate(2px, -2px);
+}
+
+.gymfolio8-bg-image {
+  background-image: url("/images/hero.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.gymfolio8-form-field.gymfolio8-focused {
+  /* Add any focused state styles here if needed */
+}
+
+@media (max-width: 1024px) {
+  .gymfolio8-bg-image {
+    display: none;
+  }
 }

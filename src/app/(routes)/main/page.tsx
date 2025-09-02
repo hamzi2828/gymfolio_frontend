@@ -6,6 +6,7 @@ import GymAboutSection from "./components/GymAboutSection";
 import GymFolioClasses from "./components/GymFolioClasses";
 import GymfolioGallery from "./components/GymfolioGallery";
 import GymTrainersSection from "./components/GymTrainersSection";
+import ContactSection from "./components/ContactSection";
 
 export default function MainPage() {
   return (
@@ -16,7 +17,7 @@ export default function MainPage() {
       <GymFolioClasses />
       <GymfolioGallery />
       <GymTrainersSection />
-      
+      <ContactSection />
       <BlogsSection />
     </main>
   );
