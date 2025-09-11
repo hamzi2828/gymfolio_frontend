@@ -4,8 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FaArrowRight, FaBars, FaTimes } from "react-icons/fa";
-import "@fortawesome/fontawesome-free/css/all.css";
+import { FaArrowRight, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { getCurrentUser, removeToken } from "@/helper/helper";
 
 const Header = () => {
@@ -25,7 +24,7 @@ const Header = () => {
     }
   };
 
-  // Only routes that exist
+  // Routes in use
   const routes = {
     home: "/",
     about: "/about-us",
@@ -34,21 +33,20 @@ const Header = () => {
     trainers: "/trainers",
     contact: "/contact-us",
     blogs: "/blogs",
-    auth: "/authentication",
     userDetails: "/user-detail",
   };
 
+  // Minimal/primary nav for header (Home via logo, Contact is CTA)
   const navItems = [
-    { key: "home", label: "Home", href: routes.home },
     { key: "about", label: "About Us", href: routes.about },
     { key: "packages", label: "Packages", href: routes.packages },
     { key: "classes", label: "Our Classes", href: routes.classes },
     { key: "trainers", label: "Our Trainers", href: routes.trainers },
-    { key: "contact", label: "Contact Us", href: routes.contact },
     { key: "blogs", label: "Blogs", href: routes.blogs },
   ];
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   return (
     <header className="fixed w-full top-0 z-50">
@@ -61,7 +59,13 @@ const Header = () => {
             onClick={closeMobileMenu}
             aria-label="Go to homepage"
           >
-            <Image src="/images/logo.png" alt="Logo" width={100} height={100} style={{ verticalAlign: "middle" }} />
+            <Image
+              src="/images/logo.png"
+              alt="Logo"
+              width={100}
+              height={100}
+              style={{ verticalAlign: "middle" }}
+            />
           </Link>
         </div>
 
@@ -95,6 +99,7 @@ const Header = () => {
                 <span className="cta-text">My Account</span>
                 <FaArrowRight size={15} aria-hidden="true" className="text-black" />
               </Link>
+
               <button
                 type="button"
                 className="cta-button for-mobile hidden md:flex ml-2"
@@ -102,7 +107,7 @@ const Header = () => {
                 onClick={handleLogout}
               >
                 <span className="cta-text">Logout</span>
-                <i className="fas fa-sign-out-alt ml-2" aria-hidden="true" />
+                <FaSignOutAlt className="ml-2" aria-hidden="true" />
               </button>
             </>
           ) : (
@@ -156,6 +161,7 @@ const Header = () => {
                   <span className="cta-text">My Account</span>
                   <FaArrowRight size={15} aria-hidden="true" className="text-black" />
                 </Link>
+
                 <button
                   type="button"
                   className="cta-button w-full justify-center"
@@ -163,7 +169,7 @@ const Header = () => {
                   onClick={handleLogout}
                 >
                   <span className="cta-text">Logout</span>
-                  <i className="fas fa-sign-out-alt ml-2" aria-hidden="true" />
+                  <FaSignOutAlt className="ml-2" aria-hidden="true" />
                 </button>
               </>
             ) : (

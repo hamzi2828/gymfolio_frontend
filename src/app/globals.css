@@ -5014,9 +5014,7 @@ html {
   background-repeat: no-repeat;
 }
 
-.gymfolio8-form-field.gymfolio8-focused {
-  /* Add any focused state styles here if needed */
-}
+
 
 @media (max-width: 1024px) {
   .gymfolio8-bg-image {

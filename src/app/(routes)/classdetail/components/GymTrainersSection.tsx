@@ -27,31 +27,7 @@ const GymTrainersSection = () => {
         facebook: "https://facebook.com/sarahmitchell",
         youtube: "https://youtube.com/@sarahmitchell",
       },
-    },
-    {
-      id: 3,
-      name: "Mike Rodriguez",
-      role: "Strength & Conditioning Coach",
-      image: "/images/trainer3.svg",
-      social: {
-        twitter: "https://twitter.com/mikerodriguez",
-        instagram: "https://instagram.com/mikerodriguez",
-        facebook: "https://facebook.com/mikerodriguez",
-        youtube: "https://youtube.com/@mikerodriguez",
-      },
-    },
-    {
-      id: 4,
-      name: "Emma Thompson",
-      role: "Cardio Specialist & Nutrition Expert",
-      image: "/images/trainer4.svg",
-      social: {
-        twitter: "https://twitter.com/emmathompson",
-        instagram: "https://instagram.com/emmathompson",
-        facebook: "https://facebook.com/emmathompson",
-        youtube: "https://youtube.com/@emmathompson",
-      },
-    },
+    }
   ];
 
   return (

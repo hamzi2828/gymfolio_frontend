@@ -64,9 +64,8 @@ const Footer = () => (
               <h4 className="footer-column-heading">Programs</h4>
               <nav className="footer-nav-links">
                 <Link href="/packages" className="footer-nav-link">Packages</Link>
-                <Link href="/our-classes" className="footer-nav-link">Our Classes</Link>
-                <Link href="/class-detail" className="footer-nav-link">Class Details</Link>
-                <Link href="/our-trainers" className="footer-nav-link">Our Trainers</Link>
+                <Link href="/classes" className="footer-nav-link">Our Classes</Link>
+                <Link href="/classdetail" className="footer-nav-link">Class Details</Link>
               </nav>
             </div>
 
@@ -75,9 +74,9 @@ const Footer = () => (
               <h4 className="footer-column-heading">Support</h4>
               <nav className="footer-nav-links">
                 <Link href="/contact-us" className="footer-nav-link">Contact Us</Link>
-                <Link href="/trainer-detail" className="footer-nav-link">Trainer Details</Link>
+                <Link href="/trainers" className="footer-nav-link">Trainer Details</Link>
                 <Link href="/faqs" className="footer-nav-link">FAQs</Link>
-                <Link href="/blogs" className="footer-nav-link">Blogs</Link>
+              
               </nav>
             </div>
 
@@ -87,7 +86,7 @@ const Footer = () => (
               <nav className="footer-nav-links">
                 <Link href="/about-us" className="footer-nav-link">About Us</Link>
                 <Link href="/privacy-policy" className="footer-nav-link">Privacy Policy</Link>
-                <Link href="/terms-and-conditions" className="footer-nav-link">Terms & Conditions</Link>
+               
                 <Link href="/contact-us" className="footer-nav-link">Get In Touch</Link>
               </nav>
             </div>
@@ -125,7 +124,7 @@ const Footer = () => (
             </p>
             <nav className="footer-legal-links">
               <Link href="/privacy-policy" className="footer-legal-link">Privacy Policy</Link>
-              <Link href="/faqs" className="footer-legal-link">FAQs</Link>
+              
               <Link href="/contact-us" className="footer-legal-link">Contact Us</Link>
             </nav>
           </div>

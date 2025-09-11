@@ -9,7 +9,7 @@ const BlogsSection: React.FC = () => {
     <>
       <section
         id="blogs"
-        className="section7-team-member py-16 md:py-20 px-4 md:px-8 lg:px-20 relative overflow-hidden"
+        className="section7-teampy-16 md:py-20 px-4 md:px-8 lg:px-20 relative overflow-hidden-member "
       >
         <div className="section7-context">
           <div className="section7-header">
