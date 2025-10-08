@@ -1,43 +1,64 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-
-const slides = [
-  {
-    heading: "Transform Your Body",
-    description:
-      "Join our state-of-the-art fitness center and experience personalized training programs designed to help you achieve your fitness goals. Our expert trainers and modern equipment will guide you on your journey to a healthier, stronger you.",
-    bgImage: "/images/hero.svg",
-    ariaLabel: "Fitness training background",
-  },
-  {
-    heading: "Expert Personal Training",
-    description:
-      "Work with certified personal trainers who will create customized workout plans tailored to your fitness level and goals. From strength training to cardio workouts, we'll help you maximize your potential and see real results.",
-    bgImage: "/images/hero.svg",
-    ariaLabel: "Personal training background",
-  },
-  {
-    heading: "Premium Fitness Experience",
-    description:
-      "Experience our world-class facilities with cutting-edge equipment, spacious workout areas, and a motivating atmosphere. Whether you're a beginner or advanced athlete, we have everything you need to succeed on your fitness journey.",
-    bgImage: "/images/hero.svg",
-    ariaLabel: "Premium gym facility background",
-  },
-];
+import { heroService, type HeroSlide } from "../services/heroService";
 
 const AUTO_INTERVAL = 4000;
 const HeroCarousel: React.FC = () => {
   const [active, setActive] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch hero slides from API
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await heroService.getActiveSlides();
+        const sortedSlides = data.sort((a, b) => a.order - b.order);
+        setSlides(sortedSlides);
+        setActive(0); // Reset to first slide when data changes
+      } catch (err) {
+        console.error('Failed to fetch hero slides:', err);
+        setError('Failed to load carousel content');
+        // Fallback to static slides if API fails
+        const fallbackSlides: HeroSlide[] = [
+          {
+            _id: 'fallback-1',
+            title: "Discover Premium Fashion",
+            description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+            imageUrl: "/images/hero.svg",
+            buttonText: "Shop Men",
+            buttonLink: "/mens-wear",
+            secondButtonText: "Shop Women", 
+            secondButtonLink: "/women-wear",
+            isActive: true,
+            order: 1,
+            ariaLabel: "Premium fashion background",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+        ];
+        setSlides(fallbackSlides);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlides();
+  }, []);
+
+  // Auto-play functionality
   React.useEffect(() => {
-    if (!autoPlay) return;
+    if (!autoPlay || slides.length === 0) return;
     const timer = setInterval(() => {
       setActive((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
     }, AUTO_INTERVAL);
     return () => clearInterval(timer);
-  }, [autoPlay, active]);
+  }, [autoPlay, active, slides.length]);
 
   const pauseAndMove = (moveFn: () => void) => {
     setAutoPlay(false);
@@ -55,17 +76,55 @@ const HeroCarousel: React.FC = () => {
     );
   const goTo = (idx: number) => pauseAndMove(() => setActive(idx));
 
+  // Loading state
+  if (loading) {
+    return (
+      <section
+        id="hero"
+        className="hero-section relative overflow-hidden"
+        role="banner"
+        aria-label="Loading carousel"
+      >
+        <div className="hero-carousel relative flex items-center justify-center min-h-[500px] bg-gray-100">
+          <div className="flex items-center space-x-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <span className="text-gray-600">Loading carousel...</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state with fallback
+  if (error && slides.length === 0) {
+    return (
+      <section
+        id="hero"
+        className="hero-section relative overflow-hidden"
+        role="banner"
+        aria-label="Carousel error"
+      >
+        <div className="hero-carousel relative flex items-center justify-center min-h-[500px] bg-gray-100">
+          <div className="text-center">
+            <p className="text-red-600 mb-2">{error}</p>
+            <p className="text-gray-500">Please refresh the page to try again.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       id="hero"
       className="hero-section relative overflow-hidden"
       role="banner"
-      aria-label="Fitness showcase carousel"
+      aria-label="Fashion showcase carousel"
     >
       <div className="hero-carousel relative" id="hero-carousel">
         {slides.map((slide, idx) => (
           <article
-            key={idx}
+            key={slide._id}
             className={`hero-slide${active === idx ? " active" : ""}`}
             role="tabpanel"
             aria-label={`Slide ${idx + 1} of ${slides.length}`}
@@ -74,27 +133,40 @@ const HeroCarousel: React.FC = () => {
           >
             <div
               className="hero-background-image"
-              style={{ backgroundImage: `url('${slide.bgImage}')` }}
+              style={{ backgroundImage: `url('${slide.imageUrl.startsWith("http") ? slide.imageUrl : `${process.env.NEXT_PUBLIC_BACKEND_URL}${slide.imageUrl}`}')` }}
               role="img"
-              aria-label={slide.ariaLabel}
+              aria-label={slide.ariaLabel || slide.title}
             >
               <div className="hero-overlay" aria-hidden="true"></div>
               <div className="hero-content">
                 <div className="hero-text-content">
                   <header className="hero-header-lines">
-                    <h1 className="hero-heading">{slide.heading}</h1>
+                    <h1 className="hero-heading">{slide.title}</h1>
                     <p className="hero-description">{slide.description}</p>
                   </header>
-                  <nav className="hero-buttons" aria-label="Get started">
-                    <Link
-                      href="/contact-us"
-                      className="hero-cta-button"
-                      role="button"
-                      aria-label="Contact us to get started"
-                    >
-                      <span className="hero-cta-text">Contact Us</span>
-                      <i className="fas fa-arrow-right" aria-hidden="true"></i>
-                    </Link>
+                  <nav className="hero-buttons" aria-label="Shop categories">
+                    {slide.buttonText && slide.buttonLink && (
+                      <Link
+                        href={slide.buttonLink}
+                        className="hero-cta-button"
+                        role="button"
+                        aria-label={slide.buttonText}
+                      >
+                        <span className="hero-cta-text">{slide.buttonText}</span>
+                        <i className="fas fa-arrow-right" aria-hidden="true"></i>
+                      </Link>
+                    )}
+                    {slide.secondButtonText && slide.secondButtonLink && (
+                      <Link
+                        href={slide.secondButtonLink}
+                        className="hero-cta-button"
+                        role="button"
+                        aria-label={slide.secondButtonText}
+                      >
+                        <span className="hero-cta-text">{slide.secondButtonText}</span>
+                        <i className="fas fa-arrow-right" aria-hidden="true"></i>
+                      </Link>
+                    )}
                   </nav>
                 </div>
               </div>
@@ -102,18 +174,19 @@ const HeroCarousel: React.FC = () => {
           </article>
         ))}
       </div>
-      <nav
-        className="hero-navigation"
-        role="tablist"
-        aria-label="Carousel navigation"
-      >
-        <button
-          className="hero-nav-btn hero-prev-btn"
-          aria-label="Previous slide"
-          aria-controls="hero-carousel"
-          type="button"
-          onClick={handlePrev}
+      {slides.length > 1 && (
+        <nav
+          className="hero-navigation"
+          role="tablist"
+          aria-label="Carousel navigation"
         >
+          <button
+            className="hero-nav-btn hero-prev-btn"
+            aria-label="Previous slide"
+            aria-controls="hero-carousel"
+            type="button"
+            onClick={handlePrev}
+          >
           <svg
             width="24"
             height="24"
@@ -168,7 +241,8 @@ const HeroCarousel: React.FC = () => {
             />
           </svg>
         </button>
-      </nav>
+        </nav>
+      )}
     </section>
   );
 };

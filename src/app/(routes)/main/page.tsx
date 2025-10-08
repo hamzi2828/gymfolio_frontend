@@ -13,7 +13,7 @@ export default function MainPage() {
     <main className="pt-20">
       <HeroCarousel />
       <GymAboutSection />
-      <WhyChooseUs />
+      <WhyChooseUs /> 
       <GymFolioClasses />
       <GymfolioGallery />
       <GymTrainersSection />

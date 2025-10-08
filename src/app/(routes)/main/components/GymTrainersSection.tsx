@@ -87,8 +87,8 @@ const GymTrainersSection = () => {
         {/* Trainers Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {trainers.map((trainer) => (
-            <Link key={trainer.id} href="/trainers" className="block group">
-              <article className="gymfolio7-trainer-card rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-lg">
+            <div key={trainer.id} className="block group">
+              <article className="gymfolio7-trainer-card rounded-lg overflow-hidden transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-lg">
                 <div className="relative overflow-hidden">
                   <img
                     src={trainer.image}
@@ -115,7 +115,6 @@ const GymTrainersSection = () => {
                       aria-label={`Follow ${trainer.name} on Twitter`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       <i className="fab fa-x-twitter text-lg"></i>
                     </Link>
@@ -125,7 +124,6 @@ const GymTrainersSection = () => {
                       aria-label={`Follow ${trainer.name} on Instagram`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       <i className="fab fa-instagram text-lg"></i>
                     </Link>
@@ -135,7 +133,6 @@ const GymTrainersSection = () => {
                       aria-label={`Follow ${trainer.name} on Facebook`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       <i className="fab fa-facebook text-lg"></i>
                     </Link>
@@ -145,14 +142,13 @@ const GymTrainersSection = () => {
                       aria-label={`Follow ${trainer.name} on YouTube`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       <i className="fab fa-youtube text-lg"></i>
                     </Link>
                   </div>
                 </div>
               </article>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

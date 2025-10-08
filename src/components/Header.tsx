@@ -1,30 +1,62 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FaArrowRight, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
+import {  FaArrowRight, FaBars, FaTimes } from "react-icons/fa";
+import "@fortawesome/fontawesome-free/css/all.css";
 import { getCurrentUser, removeToken } from "@/helper/helper";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((s) => !s);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
+
+
   const handleLogout = () => {
     try {
       removeToken();
+      setIsLoggedIn(false);
     } finally {
       closeMobileMenu();
       router.replace("/");
+      // Ensure components re-render to reflect auth change
+      router.refresh();
     }
   };
 
-  // Routes in use
+  // Initialize auth state after mount to prevent hydration issues
+  useEffect(() => {
+    setMounted(true);
+    setIsLoggedIn(!!getCurrentUser());
+  }, []);
+
+
+
+
+  // Keep auth state in sync across tabs and navigations
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const update = () => setIsLoggedIn(!!getCurrentUser());
+    window.addEventListener("focus", update);
+    window.addEventListener("storage", update);
+    return () => {
+      window.removeEventListener("focus", update);
+      window.removeEventListener("storage", update);
+    };
+  }, [mounted]);
+
+
+
+  // Only routes that exist
   const routes = {
     home: "/",
     about: "/about-us",
@@ -34,19 +66,20 @@ const Header = () => {
     contact: "/contact-us",
     blogs: "/blogs",
     userDetails: "/user-detail",
+    auth: "/authentication",
   };
 
-  // Minimal/primary nav for header (Home via logo, Contact is CTA)
+  // Create navigation items from featured categories and static pages
   const navItems = [
-    { key: "about", label: "About Us", href: routes.about },
+    { key: "about", label: "About", href: routes.about },
     { key: "packages", label: "Packages", href: routes.packages },
-    { key: "classes", label: "Our Classes", href: routes.classes },
-    { key: "trainers", label: "Our Trainers", href: routes.trainers },
-    { key: "blogs", label: "Blogs", href: routes.blogs },
+    { key: "classes", label: "Classes", href: routes.classes },
+    { key: "trainers", label: "Trainers", href: routes.trainers },
+    { key: "contact", label: "Contact", href: routes.contact },
+    { key: "blogs", label: "Blog", href: routes.blogs },
   ];
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href + "/");
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
     <header className="fixed w-full top-0 z-50">
@@ -59,13 +92,7 @@ const Header = () => {
             onClick={closeMobileMenu}
             aria-label="Go to homepage"
           >
-            <Image
-              src="/images/logo.png"
-              alt="Logo"
-              width={100}
-              height={100}
-              style={{ verticalAlign: "middle" }}
-            />
+            <Image src="/images/logo.png" alt="Logo" width={100} height={100} style={{ verticalAlign: "middle" }} />
           </Link>
         </div>
 
@@ -88,7 +115,20 @@ const Header = () => {
 
         {/* Right Section */}
         <div className="right-section">
-          {getCurrentUser() ? (
+
+
+          {!mounted ? (
+            // Show default state during SSR/hydration to prevent mismatch
+            <Link
+              href={routes.auth}
+              className="cta-button for-mobile hidden md:flex"
+              aria-label="Sign In or Sign Up"
+              onClick={closeMobileMenu}
+            >
+              <span className="cta-text">Sign In / Sign Up</span>
+              <FaArrowRight size={15} aria-hidden="true" className="text-black" />
+            </Link>
+          ) : isLoggedIn ? (
             <>
               <Link
                 href={routes.userDetails}
@@ -99,7 +139,6 @@ const Header = () => {
                 <span className="cta-text">My Account</span>
                 <FaArrowRight size={15} aria-hidden="true" className="text-black" />
               </Link>
-
               <button
                 type="button"
                 className="cta-button for-mobile hidden md:flex ml-2"
@@ -107,17 +146,17 @@ const Header = () => {
                 onClick={handleLogout}
               >
                 <span className="cta-text">Logout</span>
-                <FaSignOutAlt className="ml-2" aria-hidden="true" />
+                <i className="fas fa-sign-out-alt ml-2" aria-hidden="true" />
               </button>
             </>
           ) : (
             <Link
-              href={routes.contact}
+              href={routes.auth}
               className="cta-button for-mobile hidden md:flex"
-              aria-label="Contact Us"
+              aria-label="Sign In or Sign Up"
               onClick={closeMobileMenu}
             >
-              <span className="cta-text">Contact Us</span>
+              <span className="cta-text">Sign In / Sign Up</span>
               <FaArrowRight size={15} aria-hidden="true" className="text-black" />
             </Link>
           )}
@@ -147,10 +186,23 @@ const Header = () => {
                 </Link>
               </li>
             ))}
+
+    
           </ul>
 
           <div className="mt-6 pt-6 border-t border-gray-700">
-            {getCurrentUser() ? (
+            {!mounted ? (
+              // Show default state during SSR/hydration to prevent mismatch
+              <Link
+                href={routes.auth}
+                className="cta-button w-full justify-center"
+                aria-label="Sign In or Sign Up"
+                onClick={closeMobileMenu}
+              >
+                <span className="cta-text">Sign In / Sign Up</span>
+                <FaArrowRight size={15} aria-hidden="true" className="text-black" />
+              </Link>
+            ) : isLoggedIn ? (
               <>
                 <Link
                   href={routes.userDetails}
@@ -161,7 +213,6 @@ const Header = () => {
                   <span className="cta-text">My Account</span>
                   <FaArrowRight size={15} aria-hidden="true" className="text-black" />
                 </Link>
-
                 <button
                   type="button"
                   className="cta-button w-full justify-center"
@@ -169,17 +220,17 @@ const Header = () => {
                   onClick={handleLogout}
                 >
                   <span className="cta-text">Logout</span>
-                  <FaSignOutAlt className="ml-2" aria-hidden="true" />
+                  <i className="fas fa-sign-out-alt ml-2" aria-hidden="true" />
                 </button>
               </>
             ) : (
               <Link
-                href={routes.contact}
+                href={routes.auth}
                 className="cta-button w-full justify-center"
-                aria-label="Contact Us"
+                aria-label="Sign In or Sign Up"
                 onClick={closeMobileMenu}
               >
-                <span className="cta-text">Contact Us</span>
+                <span className="cta-text">Sign In / Sign Up</span>
                 <FaArrowRight size={15} aria-hidden="true" className="text-black" />
               </Link>
             )}
