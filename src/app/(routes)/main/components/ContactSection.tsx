@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, FormEvent } from 'react';
+import { registrationService } from '../../packages/services/registrationService';
 
 interface FormData {
   username: string;
@@ -14,6 +15,8 @@ const ContactSection: React.FC = () => {
     email: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,24 +29,36 @@ const ContactSection: React.FC = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Clear previous messages
+    setSuccessMessage('');
+    setErrorMessage('');
+
     // Simple validation
     if (!formData.username || !formData.phone || !formData.email) {
-      alert('Please fill in all fields');
+      setErrorMessage('Please fill in all fields');
       return;
     }
 
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      alert('Thank you! Your registration has been submitted successfully.');
+    try {
+      await registrationService.submitRegistration({
+        ...formData,
+        platform: 'gymfolio'
+      });
+
+      setSuccessMessage('Thank you! Your registration has been submitted successfully. We will contact you soon.');
       setFormData({
         username: '',
         phone: '',
         email: ''
       });
+    } catch (error) {
+      console.error('Registration submission error:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to submit registration. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -168,6 +183,20 @@ const ContactSection: React.FC = () => {
                     />
                   </div>
                 </div>
+
+                {/* Success Message */}
+                {successMessage && (
+                  <div className="rounded-lg bg-green-50 p-4 border border-green-200">
+                    <p className="text-green-800 text-sm">{successMessage}</p>
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {errorMessage && (
+                  <div className="rounded-lg bg-red-50 p-4 border border-red-200">
+                    <p className="text-red-800 text-sm">{errorMessage}</p>
+                  </div>
+                )}
 
                 {/* Submit Button */}
                 <button
