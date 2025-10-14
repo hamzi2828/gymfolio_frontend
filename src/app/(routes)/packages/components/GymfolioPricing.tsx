@@ -1,79 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-
-type PlanTheme = "light" | "dark";
-
-interface Plan {
-  id: string;
-  name: string;
-  price: string;
-  currency: string;
-  period: string;
-  features: string[];
-  theme?: PlanTheme;
-  badge?: string;
-  supportingText?: string;
-}
-
-const plans: Plan[] = [
-  {
-    id: "starter",
-    name: "Starter",
-    price: "5,000",
-    currency: "PKR",
-    period: "per month",
-    features: ["Gym access", "2 classes/week"],
-    theme: "light",
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: "13,000",
-    currency: "PKR",
-    period: "3 months",
-    features: ["Gym", "5 classes/week", "diet plan"],
-    theme: "dark",
-    badge: "Popular",
-    supportingText: "Everything in our basic plan plus....",
-  },
-  {
-    id: "elite",
-    name: "Elite",
-    price: "25,000",
-    currency: "PKR",
-    period: "6 months",
-    features: ["All above", "Trainer sessions"],
-    theme: "light",
-  },
-  {
-    id: "platinum",
-    name: "Platinum",
-    price: "45,000",
-    currency: "PKR",
-    period: "12 months",
-    features: ["Full access", "Assessments"],
-    theme: "light",
-  },
-  {
-    id: "family-pack",
-    name: "Family Pack",
-    price: "Varies",
-    currency: "PKR",
-    period: "Custom",
-    features: ["Multi-login access"],
-    theme: "light",
-  },
-  {
-    id: "corporate",
-    name: "Corporate",
-    price: "Custom",
-    currency: "PKR",
-    period: "B2B Deal",
-    features: ["Company-wide fitness plan"],
-    theme: "light",
-  },
-];
+import { packageService, Package } from "../services/packageService";
 
 const CheckIcon = () => (
   <svg
@@ -125,6 +53,28 @@ const ArrowRightIcon = () => (
 );
 
 const GymfolioPricing: React.FC = () => {
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await packageService.getActivePackages();
+        setPackages(data);
+      } catch (err) {
+        console.error('Error fetching packages:', err);
+        setError('Failed to load packages. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPackages();
+  }, []);
+
   return (
     <section
       className="GymfolioPricing relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-16 lg:py-20"
@@ -143,19 +93,40 @@ const GymfolioPricing: React.FC = () => {
         </h2>
       </header>
 
-      <div
-        className="GymfolioPricing-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-        role="list"
-        aria-label="Pricing plans"
-      >
-        {plans.map((plan) => {
-          const isDark = plan.theme === "dark";
-          const titleId = `GymfolioPricing-${plan.id}-title`;
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#bee304]"></div>
+            <p className="text-gray-600">Loading packages...</p>
+          </div>
+        </div>
+      )}
 
-          return (
-            <article
-              key={plan.id}
-              aria-labelledby={titleId}
+      {/* Error State */}
+      {error && !loading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="rounded-lg bg-red-50 p-6 max-w-md">
+            <p className="text-red-800 text-center">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Packages Grid */}
+      {!loading && !error && (
+        <div
+          className="GymfolioPricing-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+          role="list"
+          aria-label="Pricing plans"
+        >
+          {packages.map((plan) => {
+            const isDark = plan.theme === "dark";
+            const titleId = `GymfolioPricing-${plan._id}-title`;
+
+            return (
+              <article
+                key={plan._id}
+                aria-labelledby={titleId}
               className={[
                 "GymfolioPricing-card relative flex flex-col overflow-hidden rounded-2xl border",
                 isDark ? "GymfolioPricing-card--dark border-gray-200 bg-[#181b20] shadow-lg" : "border-[#cfd0d2] bg-white",
@@ -280,8 +251,9 @@ const GymfolioPricing: React.FC = () => {
               )}
             </article>
           );
-        })}
-      </div>
+          })}
+        </div>
+      )}
     </section>
   );
 };
