@@ -15,6 +15,7 @@ export interface HeroSlide {
   isActive: boolean;
   order: number;
   ariaLabel?: string;
+  platform: 'gymfolio';
   createdAt: string;
   updatedAt: string;
 }
@@ -29,6 +30,7 @@ export interface HeroSlideInput {
   isActive?: boolean;
   order?: number;
   ariaLabel?: string;
+  platform?: 'gymfolio';
 }
 
 interface ApiResponse<T> {
@@ -39,16 +41,18 @@ interface ApiResponse<T> {
 
 export const heroService = {
   /**
-   * Get all active hero slides
+   * Get all active hero slides for gymfolio platform
    */
   async getActiveSlides(): Promise<HeroSlide[]> {
     try {
-      const response = await axios.get<ApiResponse<HeroSlide[]>>(`${API_BASE_URL}/hero-slides/active`);
-      
+      const response = await axios.get<ApiResponse<HeroSlide[]>>(`${API_BASE_URL}/hero-slides/active`, {
+        params: { platform: 'gymfolio' }
+      });
+
       if (!response.data.success) {
         throw new Error(response.data.message || 'Failed to fetch hero slides');
       }
-      
+
       return response.data.data;
     } catch (error) {
       console.error('Error fetching active hero slides:', error);
