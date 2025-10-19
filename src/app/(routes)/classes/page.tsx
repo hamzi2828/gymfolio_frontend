@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link"; // <-- add this
 import "@fortawesome/fontawesome-free/css/all.css";
 import ContactSection from "../main/components/ContactSection";
 import GymfolioClass from "./components/GymfolioClass";
