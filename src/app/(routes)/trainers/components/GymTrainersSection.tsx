@@ -1,58 +1,49 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { trainerService, Trainer } from "../../main/services/trainerService";
 
-const GymTrainersSection = () => {
-  const trainers = [
-    {
-      id: 1,
-      name: "Alex Johnson",
-      role: "Head Trainer & Fitness Coach",
-      image: "/images/trainer-1.svg",
-      social: {
-        twitter: "https://twitter.com/alexjohnson",
-        instagram: "https://instagram.com/alexjohnson",
-        facebook: "https://facebook.com/alexjohnson",
-        youtube: "https://youtube.com/@alexjohnson",
-      },
-    },
-    {
-      id: 2,
-      name: "Sarah Mitchell",
-      role: "Yoga Instructor & Wellness Coach",
-      image: "/images/trainer2.svg",
-      social: {
-        twitter: "https://twitter.com/sarahmitchell",
-        instagram: "https://instagram.com/sarahmitchell",
-        facebook: "https://facebook.com/sarahmitchell",
-        youtube: "https://youtube.com/@sarahmitchell",
-      },
-    },
-    {
-      id: 3,
-      name: "Mike Rodriguez",
-      role: "Strength & Conditioning Coach",
-      image: "/images/trainer3.svg",
-      social: {
-        twitter: "https://twitter.com/mikerodriguez",
-        instagram: "https://instagram.com/mikerodriguez",
-        facebook: "https://facebook.com/mikerodriguez",
-        youtube: "https://youtube.com/@mikerodriguez",
-      },
-    },
-    {
-      id: 4,
-      name: "Emma Thompson",
-      role: "Cardio Specialist & Nutrition Expert",
-      image: "/images/trainer4.svg",
-      social: {
-        twitter: "https://twitter.com/emmathompson",
-        instagram: "https://instagram.com/emmathompson",
-        facebook: "https://facebook.com/emmathompson",
-        youtube: "https://youtube.com/@emmathompson",
-      },
-    },
-  ];
+interface GymTrainersSectionProps {
+  onTrainerClick?: (trainer: Trainer) => void;
+}
+
+const GymTrainersSection: React.FC<GymTrainersSectionProps> = ({ onTrainerClick }) => {
+  const [trainers, setTrainers] = useState<Trainer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTrainers = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await trainerService.getActiveTrainers();
+      setTrainers(data);
+      // Set the first trainer as default selected
+      if (data.length > 0 && onTrainerClick) {
+        onTrainerClick(data[0]);
+      }
+    } catch (err) {
+      console.error("Error fetching trainers:", err);
+      setError(err instanceof Error ? err.message : "Failed to load trainers");
+      setTrainers([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [onTrainerClick]);
+
+  useEffect(() => {
+    fetchTrainers();
+  }, [fetchTrainers]);
+
+  const handleTrainerClick = (trainer: Trainer, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onTrainerClick) {
+      onTrainerClick(trainer);
+      // Scroll to TrainerDetail section
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="py-16 lg:py-20 px-4 sm:px-8 lg:px-20">
@@ -84,77 +75,115 @@ const GymTrainersSection = () => {
           </div>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-center">
+            {error}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && trainers.length === 0 && (
+          <div className="text-center py-20">
+            <p className="gymfolio7-dark-gray-text text-lg">No trainers available at the moment.</p>
+          </div>
+        )}
+
         {/* Trainers Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {trainers.map((trainer) => (
-            <Link key={trainer.id} href="/trainers" className="block group">
-              <article className="gymfolio7-trainer-card rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-lg">
-                <div className="relative overflow-hidden">
-                  <img
-                    src={trainer.image}
-                    alt={`${trainer.name} - ${trainer.role}`}
-                    className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="gymfolio7-trainer-card-overlay absolute inset-0"></div>
-                </div>
-
-                <div className="p-4 text-center">
-                  <div className="mb-4">
-                    <h3 className="gymfolio7-green-text gymfolio7-font-montserrat font-bold text-base leading-6 mb-1">
-                      {trainer.name}
-                    </h3>
-                    <p className="gymfolio7-dark-gray-text gymfolio7-font-inter text-sm leading-5">
-                      {trainer.role}
-                    </p>
+        {!loading && !error && trainers.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {trainers.map((trainer) => (
+              <div
+                key={trainer._id}
+                className="block group cursor-pointer"
+                onClick={(e) => handleTrainerClick(trainer, e)}
+              >
+                <article className="gymfolio7-trainer-card rounded-lg overflow-hidden transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-lg">
+                  <div className="relative overflow-hidden h-64">
+                    <Image
+                      src={trainer.image || '/images/trainer-1.svg'}
+                      alt={`${trainer.name} - ${trainer.role}`}
+                      width={400}
+                      height={256}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      priority={false}
+                    />
+                    <div className="gymfolio7-trainer-card-overlay absolute inset-0"></div>
                   </div>
 
-                  <div className="flex justify-center gap-3">
-                    <Link
-                      href={trainer.social.twitter}
-                      className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                      aria-label={`Follow ${trainer.name} on Twitter`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <i className="fab fa-x-twitter text-lg"></i>
-                    </Link>
-                    <Link
-                      href={trainer.social.instagram}
-                      className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                      aria-label={`Follow ${trainer.name} on Instagram`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <i className="fab fa-instagram text-lg"></i>
-                    </Link>
-                    <Link
-                      href={trainer.social.facebook}
-                      className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                      aria-label={`Follow ${trainer.name} on Facebook`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <i className="fab fa-facebook text-lg"></i>
-                    </Link>
-                    <Link
-                      href={trainer.social.youtube}
-                      className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                      aria-label={`Follow ${trainer.name} on YouTube`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <i className="fab fa-youtube text-lg"></i>
-                    </Link>
+                  <div className="p-4 text-center">
+                    <div className="mb-4">
+                      <h3 className="gymfolio7-green-text gymfolio7-font-montserrat font-bold text-base leading-6 mb-1">
+                        {trainer.name}
+                      </h3>
+                      <p className="gymfolio7-dark-gray-text gymfolio7-font-inter text-sm leading-5">
+                        {trainer.role}
+                      </p>
+                    </div>
+
+                    <div className="flex justify-center gap-3">
+                      {trainer.social?.twitter && (
+                        <Link
+                          href={trainerService.formatSocialUrl(trainer.social.twitter, 'twitter')}
+                          className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                          aria-label={`Follow ${trainer.name} on Twitter`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <i className="fab fa-x-twitter text-lg"></i>
+                        </Link>
+                      )}
+                      {trainer.social?.instagram && (
+                        <Link
+                          href={trainerService.formatSocialUrl(trainer.social.instagram, 'instagram')}
+                          className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                          aria-label={`Follow ${trainer.name} on Instagram`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <i className="fab fa-instagram text-lg"></i>
+                        </Link>
+                      )}
+                      {trainer.social?.facebook && (
+                        <Link
+                          href={trainerService.formatSocialUrl(trainer.social.facebook, 'facebook')}
+                          className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                          aria-label={`Follow ${trainer.name} on Facebook`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <i className="fab fa-facebook text-lg"></i>
+                        </Link>
+                      )}
+                      {trainer.social?.youtube && (
+                        <Link
+                          href={trainerService.formatSocialUrl(trainer.social.youtube, 'youtube')}
+                          className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                          aria-label={`Follow ${trainer.name} on YouTube`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <i className="fab fa-youtube text-lg"></i>
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </article>
-            </Link>
-          ))}
-        </div>
+                </article>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

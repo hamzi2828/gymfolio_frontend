@@ -1,6 +1,11 @@
 "use client";
 import React, { useRef, useState } from "react";
 import Image from "next/image";
+import { GymClass } from "../../main/services/gymClassService";
+
+interface GymfolioClassProps {
+  gymClass: GymClass | null;
+}
 
 const CheckIcon = () => (
   <svg
@@ -85,16 +90,31 @@ const VideoClassButton = () => (
   </svg>
 );
 
-const points: string[] = [
-  "Access to all basic features",
-  "Professional workout guidance",
-  "Flexible class schedules",
-];
-
-const GymfolioClass: React.FC = () => {
+const GymfolioClass: React.FC<GymfolioClassProps> = ({ gymClass }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+
+  // If no class is selected, show a placeholder message
+  if (!gymClass) {
+    return (
+      <section className="GymfolioClasses py-16 md:py-20 px-4 md:px-8 lg:px-20 relative overflow-hidden">
+        <div className="text-center py-20">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <span className="inline-block h-2 w-2 rounded-full bg-[#6c8704]"></span>
+            <span className="text-sm font-semibold text-[#85868b]">Our Classes</span>
+          </div>
+          <h2 className="text-2xl font-bold text-black/90 mb-4">Select a Class</h2>
+          <p className="text-[#4d4d51]">Click on any class below to view its details</p>
+        </div>
+      </section>
+    );
+  }
+
+  // Use features from gymClass or fallback to default points
+  const points = gymClass.features && gymClass.features.length > 0
+    ? gymClass.features
+    : ["Access to all basic features", "Professional workout guidance", "Flexible class schedules"];
 
   const togglePlayPause = () => {
     if (videoRef.current) {
@@ -139,14 +159,12 @@ const GymfolioClass: React.FC = () => {
               id="GymfolioClasses-title"
               className="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-tight text-black/90"
             >
-              SPECIFIC CLASSES WHAT YOU NEEDS
+              {gymClass.name}
             </h2>
           </header>
 
           <p className="GymfolioClasses-description text-sm sm:text-base leading-6 text-[#4d4d51]">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-            Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis,
-            ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+            {gymClass.shortDescription || gymClass.description || "Discover this amazing class and transform your fitness journey."}
           </p>
 
           <ul className="GymfolioClasses-points space-y-4">
@@ -160,16 +178,18 @@ const GymfolioClass: React.FC = () => {
             ))}
           </ul>
 
-          <div>
-            <button
-              onClick={handleVideoClick}
-              className="GymfolioClasses-cta inline-flex items-center gap-2 rounded-lg bg-[#bee304] px-6 py-3 font-semibold text-black shadow-[4px_4px_12px_rgba(0,132,255,0.25)] transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
-              aria-label="Watch video class"
-            >
-              Watch Video Class
-              <VideoClassButton />
-            </button>
-          </div>
+          {gymClass.videoUrl && (
+            <div>
+              <button
+                onClick={handleVideoClick}
+                className="GymfolioClasses-cta inline-flex items-center gap-2 rounded-lg bg-[#bee304] px-6 py-3 font-semibold text-black shadow-[4px_4px_12px_rgba(0,132,255,0.25)] transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+                aria-label="Watch video class"
+              >
+                Watch Video Class
+                <VideoClassButton />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right: Media */}
@@ -178,19 +198,21 @@ const GymfolioClass: React.FC = () => {
             // Thumbnail view
             <>
               <Image
-                src="/images/hero.svg"
-                alt="Classes preview"
+                src={gymClass.videoPoster || gymClass.thumbnail || "/images/hero.svg"}
+                alt={`${gymClass.name} preview`}
                 fill
                 className="object-cover"
                 priority={false}
               />
-              <button
-                onClick={handleVideoClick}
-                className="absolute inset-0 grid place-items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black transition-transform hover:scale-105"
-                aria-label="Play video"
-              >
-                <PlayIcon />
-              </button>
+              {gymClass.videoUrl && (
+                <button
+                  onClick={handleVideoClick}
+                  className="absolute inset-0 grid place-items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black transition-transform hover:scale-105"
+                  aria-label="Play video"
+                >
+                  <PlayIcon />
+                </button>
+              )}
             </>
           ) : (
             // Video view
@@ -203,9 +225,14 @@ const GymfolioClass: React.FC = () => {
                 onPlay={() => setIsPlaying(true)}
                 controls={false}
               >
-                {/* Replace with your actual video URL */}
-                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.webm" type="video/webm" />
+                {gymClass.videoUrl ? (
+                  <source src={gymClass.videoUrl} type="video/mp4" />
+                ) : (
+                  <>
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.webm" type="video/webm" />
+                  </>
+                )}
                 Your browser does not support the video tag.
               </video>
               

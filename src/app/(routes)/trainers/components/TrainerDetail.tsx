@@ -2,37 +2,31 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Trainer, trainerService } from "../../main/services/trainerService";
 
-const TrainerDetail = () => {
+interface TrainerDetailProps {
+  trainer: Trainer | null;
+}
+
+const TrainerDetail: React.FC<TrainerDetailProps> = ({ trainer }) => {
   const badgeText = "Meet Our Trainers";
   const heading = "The Best Fitness Gym in Town";
 
-  const cardImage = "/images/trainer-1.svg";
-  const userName = "Alex Johnson";
-  const role = "Head Trainer & Fitness Coach";
-
-  const biography =
-    "Alex has over 10 years of experience in fitness coaching and personal training. He specializes in strength training, functional fitness, and overall wellness programs that help clients achieve their goals safely and effectively.";
-
-  const achievements = [
-    "Certified Personal Trainer (CPT)",
-    "Nutrition Specialist",
-    "Trained over 500+ clients worldwide",
-    "Featured in Fitness Pro Magazine",
-  ];
-
-  const contactInfo = {
-    email: "alex.johnson@gym.com",
-    phone: "+1 (123) 456-7890",
-    location: "New York, USA",
-  };
-
-  const social = {
-    twitter: "https://twitter.com/alexjohnson",
-    instagram: "https://instagram.com/alexjohnson",
-    facebook: "https://facebook.com/alexjohnson",
-    youtube: "https://youtube.com/@alexjohnson",
-  };
+  // If no trainer is selected, show a placeholder message
+  if (!trainer) {
+    return (
+      <div className="trainer-detail-about-us p-6 sm:p-10 lg:p-20 flex flex-col items-center justify-center">
+        <div className="text-center py-20">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <div className="w-2 h-2 rounded-full bg-lime-600"></div>
+            <span className="text-gray-400 text-sm font-semibold">Meet Our Trainers</span>
+          </div>
+          <h2 className="text-2xl font-bold text-black/90 mb-4">Select a Trainer</h2>
+          <p className="text-gray-600">Click on any trainer below to view their details</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="trainer-detail-about-us p-6 sm:p-10 lg:p-20 flex flex-col lg:flex-row gap-8 lg:gap-16 items-center justify-start">
@@ -59,8 +53,8 @@ const TrainerDetail = () => {
           <div className="trainer-detail-team-card bg-gray-50 rounded-lg border border-gray-200 flex flex-col w-full sm:w-[400px] lg:w-[600px] h-[400px] sm:h-[500px] lg:h-[600px] overflow-hidden flex-shrink-0">
             <div className="trainer-detail-card-bg flex-1 relative">
               <Image
-                src={cardImage}
-                alt="Trainer"
+                src={trainer.image || '/images/trainer-1.svg'}
+                alt={trainer.name}
                 fill
                 className="object-cover"
               />
@@ -69,51 +63,59 @@ const TrainerDetail = () => {
             <div className="trainer-detail-context p-4 flex flex-col gap-4 items-center justify-center">
               <div className="trainer-detail-names flex flex-col items-center justify-center">
                 <div className="trainer-detail-user-name text-lime-700 text-center font-bold text-base leading-6">
-                  {userName}
+                  {trainer.name}
                 </div>
                 <div className="trainer-detail-role text-gray-700 text-center font-normal text-sm leading-6">
-                  {role}
+                  {trainer.role}
                 </div>
               </div>
 
               {/* Social Media */}
               <div className="trainer-detail-social-media flex justify-center gap-3">
-                <Link
-                  href={social.twitter}
-                  className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                  aria-label={`Follow ${userName} on Twitter`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fab fa-x-twitter text-lg"></i>
-                </Link>
-                <Link
-                  href={social.instagram}
-                  className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                  aria-label={`Follow ${userName} on Instagram`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fab fa-instagram text-lg"></i>
-                </Link>
-                <Link
-                  href={social.facebook}
-                  className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                  aria-label={`Follow ${userName} on Facebook`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fab fa-facebook text-lg"></i>
-                </Link>
-                <Link
-                  href={social.youtube}
-                  className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
-                  aria-label={`Follow ${userName} on YouTube`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fab fa-youtube text-lg"></i>
-                </Link>
+                {trainer.social?.twitter && (
+                  <Link
+                    href={trainerService.formatSocialUrl(trainer.social.twitter, 'twitter')}
+                    className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                    aria-label={`Follow ${trainer.name} on Twitter`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="fab fa-x-twitter text-lg"></i>
+                  </Link>
+                )}
+                {trainer.social?.instagram && (
+                  <Link
+                    href={trainerService.formatSocialUrl(trainer.social.instagram, 'instagram')}
+                    className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                    aria-label={`Follow ${trainer.name} on Instagram`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="fab fa-instagram text-lg"></i>
+                  </Link>
+                )}
+                {trainer.social?.facebook && (
+                  <Link
+                    href={trainerService.formatSocialUrl(trainer.social.facebook, 'facebook')}
+                    className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                    aria-label={`Follow ${trainer.name} on Facebook`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="fab fa-facebook text-lg"></i>
+                  </Link>
+                )}
+                {trainer.social?.youtube && (
+                  <Link
+                    href={trainerService.formatSocialUrl(trainer.social.youtube, 'youtube')}
+                    className="gymfolio7-social-icon hover:scale-110 focus:scale-110 focus:outline-none"
+                    aria-label={`Follow ${trainer.name} on YouTube`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="fab fa-youtube text-lg"></i>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -121,27 +123,50 @@ const TrainerDetail = () => {
           {/* Right Content */}
           <div className="trainer-detail-context2 flex flex-col gap-6 lg:gap-8 items-start justify-start flex-1 w-full">
             {/* Biography */}
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Biography</h2>
-              <p className="text-gray-600">{biography}</p>
-            </div>
+            {trainer.bio && (
+              <div>
+                <h2 className="text-lg font-semibold mb-2">Biography</h2>
+                <p className="text-gray-600">{trainer.bio}</p>
+              </div>
+            )}
 
-            {/* Achievements */}
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Achievements</h2>
-              <ul className="list-disc pl-5 text-gray-600">
-                {achievements.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </div>
+            {/* Specialties */}
+            {trainer.specialties && trainer.specialties.length > 0 && (
+              <div>
+                <h2 className="text-lg font-semibold mb-2">Specialties</h2>
+                <ul className="list-disc pl-5 text-gray-600">
+                  {trainer.specialties.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Certifications */}
+            {trainer.certifications && trainer.certifications.length > 0 && (
+              <div>
+                <h2 className="text-lg font-semibold mb-2">Certifications</h2>
+                <ul className="list-disc pl-5 text-gray-600">
+                  {trainer.certifications.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Experience */}
+            {trainer.experience && (
+              <div>
+                <h2 className="text-lg font-semibold mb-2">Experience</h2>
+                <p className="text-gray-600">{trainer.experience} years of professional training</p>
+              </div>
+            )}
 
             {/* Contact Info */}
             <div>
               <h2 className="text-lg font-semibold mb-2">Contact Info</h2>
-              <p className="text-gray-600">📧 {contactInfo.email}</p>
-              <p className="text-gray-600">📞 {contactInfo.phone}</p>
-              <p className="text-gray-600">📍 {contactInfo.location}</p>
+              {trainer.email && <p className="text-gray-600">📧 {trainer.email}</p>}
+              {trainer.phone && <p className="text-gray-600">📞 {trainer.phone}</p>}
             </div>
           </div>
         </div>
