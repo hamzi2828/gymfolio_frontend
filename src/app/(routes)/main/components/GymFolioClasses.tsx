@@ -1,55 +1,43 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { gymClassService, GymClass } from "../services/gymClassService";
+
+interface CarouselTrackElement extends HTMLDivElement {
+  touchStartX?: number | null;
+  touchCurrentX?: number | null;
+}
 
 const GymFolioClasses = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardsToShow, setCardsToShow] = useState(3);
-  const carouselTrackRef = useRef<HTMLDivElement | null>(null);
+  const [classesData, setClassesData] = useState<GymClass[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const carouselTrackRef = useRef<CarouselTrackElement | null>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
-  
-  const totalCards = 6;
-  const maxIndex = totalCards - cardsToShow;
 
-  const classesData = [
-    {
-      id: 1,
-      title: "Power Yoga",
-      href: "#power-yoga",
-      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1420&q=80"
-    },
-    {
-      id: 2,
-      title: "Battle Box",
-      href: "#battle-box",
-      image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-    },
-    {
-      id: 3,
-      title: "Boxing",
-      href: "#boxing",
-      image: "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80"
-    },
-    {
-      id: 4,
-      title: "Cardio",
-      href: "#cardio",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-    },
-    {
-      id: 5,
-      title: "Strength Training",
-      href: "#strength",
-      image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-    },
-    {
-      id: 6,
-      title: "Pilates",
-      href: "#pilates",
-      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+  const totalCards = classesData.length;
+
+  // Fetch classes on component mount
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const fetchClasses = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await gymClassService.getActiveClasses();
+      setClassesData(data);
+    } catch (err) {
+      console.error("Error fetching gym classes:", err);
+      setError(err instanceof Error ? err.message : "Failed to load classes");
+      setClassesData([]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   // Get cards to show based on screen size
   const getCardsToShow = () => {
@@ -63,17 +51,17 @@ const GymFolioClasses = () => {
   };
 
   // Update cards to show on resize
-  const updateCardsToShow = () => {
+  const updateCardsToShow = useCallback(() => {
     const newCardsToShow = getCardsToShow();
     setCardsToShow(newCardsToShow);
     const newMaxIndex = totalCards - newCardsToShow;
     if (currentIndex > newMaxIndex) {
       setCurrentIndex(newMaxIndex);
     }
-  };
+  }, [totalCards, currentIndex]);
 
   // Initialize autoplay
-  const startAutoPlay = () => {
+  const startAutoPlay = useCallback(() => {
     if (autoPlayRef.current) {
       clearInterval(autoPlayRef.current);
     }
@@ -83,7 +71,7 @@ const GymFolioClasses = () => {
         return prevIndex >= maxIdx ? 0 : prevIndex + 1;
       });
     }, 4000);
-  };
+  }, [totalCards, cardsToShow]);
 
   // Navigation handlers
   const nextSlide = () => {
@@ -100,21 +88,21 @@ const GymFolioClasses = () => {
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (!carouselTrackRef.current) return;
     const touch = e.touches[0];
-    (carouselTrackRef.current as any).touchStartX = touch.clientX;
+    carouselTrackRef.current.touchStartX = touch.clientX;
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!carouselTrackRef.current || !(carouselTrackRef.current as any).touchStartX) return;
+    if (!carouselTrackRef.current || !carouselTrackRef.current.touchStartX) return;
     const touch = e.touches[0];
-    (carouselTrackRef.current as any).touchCurrentX = touch.clientX;
+    carouselTrackRef.current.touchCurrentX = touch.clientX;
   };
 
   const handleTouchEnd = () => {
-    if (!carouselTrackRef.current || 
-        !(carouselTrackRef.current as any).touchStartX || 
-        !(carouselTrackRef.current as any).touchCurrentX) return;
-    
-    const diff = (carouselTrackRef.current as any).touchStartX - (carouselTrackRef.current as any).touchCurrentX;
+    if (!carouselTrackRef.current ||
+        !carouselTrackRef.current.touchStartX ||
+        !carouselTrackRef.current.touchCurrentX) return;
+
+    const diff = carouselTrackRef.current.touchStartX - carouselTrackRef.current.touchCurrentX;
     const threshold = 50;
 
     if (Math.abs(diff) > threshold) {
@@ -125,8 +113,8 @@ const GymFolioClasses = () => {
       }
     }
 
-    (carouselTrackRef.current as any).touchStartX = null;
-    (carouselTrackRef.current as any).touchCurrentX = null;
+    carouselTrackRef.current.touchStartX = null;
+    carouselTrackRef.current.touchCurrentX = null;
   };
 
   // Effects
@@ -135,16 +123,18 @@ const GymFolioClasses = () => {
     const handleResize = () => updateCardsToShow();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [updateCardsToShow]);
 
   useEffect(() => {
-    startAutoPlay();
+    if (classesData.length > 0) {
+      startAutoPlay();
+    }
     return () => {
       if (autoPlayRef.current) {
         clearInterval(autoPlayRef.current);
       }
     };
-  }, [cardsToShow]);
+  }, [cardsToShow, classesData.length, startAutoPlay]);
 
   // Calculate transform
   const cardWidth = 302;
@@ -177,7 +167,29 @@ const GymFolioClasses = () => {
           </p>
         </header>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="bg-red-900/20 border border-red-500/50 text-red-300 px-4 py-3 rounded text-center">
+            {error}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && classesData.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-gray-300 text-lg">No classes available at the moment.</p>
+          </div>
+        )}
+
         {/* Carousel Container */}
+        {!loading && !error && classesData.length > 0 && (
         <div className="relative">
           {/* Navigation Buttons */}
           <button
@@ -234,20 +246,20 @@ const GymFolioClasses = () => {
     onTouchEnd={handleTouchEnd}
   >
     {classesData.map((classItem) => (
-      <Link 
-        key={classItem.id}
-        href={classItem.href} 
+      <Link
+        key={classItem._id}
+        href={classItem.slug ? `/classes/${classItem.slug}` : `#${classItem._id}`}
         className="gymfolio4-carousel-card group"
       >
         <div
           className="gymfolio4-card-image"
           style={{
-            backgroundImage: `url('${classItem.image}')`,
+            backgroundImage: `url('${classItem.thumbnail || '/images/class-placeholder.jpg'}')`,
           }}
         ></div>
         <div className="gymfolio4-card-overlay">
           <h3 className="gymfolio4-card-title">
-            {classItem.title}
+            {classItem.name}
           </h3>
           <div className="gymfolio4-plus-icon">
             <svg
@@ -280,6 +292,7 @@ const GymFolioClasses = () => {
 </div>
 
         </div>
+        )}
       </div>
     </section>
   );
