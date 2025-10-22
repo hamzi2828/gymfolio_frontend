@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { type Package } from '../../packages/services/packageService';
 
@@ -13,28 +13,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   onSubmit,
   isSubmitting = false
 }) => {
-  const [discountInput, setDiscountInput] = useState('');
-  const [applyingDiscount, setApplyingDiscount] = useState(false);
 
   const isPackageCheckout = !!packageData;
 
-  const handleApplyDiscount = async () => {
-    if (!discountInput.trim()) {
-      alert('Please enter a discount code');
-      return;
-    }
 
-    try {
-      setApplyingDiscount(true);
-      // Placeholder for discount logic
-      // In real implementation, validate with backend
-      alert('Discount codes coming soon!');
-    } catch {
-      alert('Failed to apply discount code');
-    } finally {
-      setApplyingDiscount(false);
-    }
-  };
 
   // Calculate totals based on checkout type
   let subtotalAmount = 0;

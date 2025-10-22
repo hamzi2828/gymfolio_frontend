@@ -35,7 +35,7 @@ class CheckoutService {
 
   private async getStripe() {
     if (!this.stripePromise) {
-      const response = await fetch(`${this.baseUrl}/api/payment/stripe-public-key`);
+      const response = await fetch(`${this.baseUrl}/api/gymfolio/payment/stripe-public-key`);
       const data = await response.json();
       if (data.success && data.publicKey) {
         this.stripePromise = loadStripe(data.publicKey);
@@ -69,7 +69,7 @@ class CheckoutService {
         country: customerInfo.country || 'United States'
       };
 
-      const response = await fetch(`${this.baseUrl}/api/payment/create-package-checkout-session`, {
+      const response = await fetch(`${this.baseUrl}/api/gymfolio/payment/create-package-checkout-session`, {
         method: 'POST',
         headers: this.getAuthHeaders(),
         body: JSON.stringify({
@@ -95,8 +95,6 @@ class CheckoutService {
         if (error) {
           throw new Error(error.message);
         }
-
-        return result;
       }
 
       throw new Error(result.message || 'Failed to create package checkout session');
@@ -111,7 +109,7 @@ class CheckoutService {
     try {
       console.log('✅ Verifying payment for session:', sessionId);
 
-      const response = await fetch(`${this.baseUrl}/api/payment/verify/${sessionId}`, {
+      const response = await fetch(`${this.baseUrl}/api/gymfolio/payment/verify/${sessionId}`, {
         method: 'GET',
         headers: this.getAuthHeaders(),
       });
@@ -129,7 +127,7 @@ class CheckoutService {
   // Get Stripe public key
   async getStripePublicKey() {
     try {
-      const response = await fetch(`${this.baseUrl}/api/payment/stripe-public-key`);
+      const response = await fetch(`${this.baseUrl}/api/gymfolio/payment/stripe-public-key`);
       const data = await response.json();
       return data.publicKey;
     } catch (error) {
