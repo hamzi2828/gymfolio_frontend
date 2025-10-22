@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import React, { useState, useEffect, useCallback } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { checkoutService, type ShippingAddress } from "../services/checkoutService";
 import { getCurrentUser } from "../../../../helper/helper";
@@ -19,10 +18,11 @@ interface CheckoutFormProps {
   discountCode?: string;
   discountAmount?: number;
   packageData?: Package | null;
+  onSubmitChange?: (handler: () => void, isSubmitting: boolean) => void;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
-  const [paymentMethod, setPaymentMethod] = useState("stripe");
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData, onSubmitChange }) => {
+  const [paymentMethod] = useState("stripe");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -34,10 +34,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
     country: '',
     firstName: '',
     lastName: '',
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
     phoneNumber: ''
   });
 
@@ -63,8 +59,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
   }, []);
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
 
     if (isSubmitting) return;
 
@@ -88,8 +86,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
           if (error.includes('First name')) newErrors.firstName = error;
           if (error.includes('Last name')) newErrors.lastName = error;
           if (error.includes('Country')) newErrors.country = error;
-          if (error.includes('Address')) newErrors.address = error;
-          if (error.includes('City')) newErrors.city = error;
           if (error.includes('Phone')) newErrors.phoneNumber = error;
         });
         setErrors(newErrors);
@@ -101,16 +97,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
       // If payment method is Stripe, create checkout session
       if (paymentMethod === 'stripe') {
         try {
-          const shippingWithState = {
-            ...shippingData,
-            state: shippingData.state || 'N/A'
-          };
-
           // Handle package checkout
           if (isPackageCheckout && packageData) {
             await checkoutService.createPackageStripeCheckout(
               packageData._id,
-              shippingWithState
+              shippingData
             );
             return;
           } else {
@@ -131,7 +122,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [isSubmitting, isPackageCheckout, packageData, shippingData, paymentMethod]);
+
+  // Expose submit handler to parent
+  useEffect(() => {
+    if (onSubmitChange) {
+      onSubmitChange(handleSubmit, isSubmitting);
+    }
+  }, [handleSubmit, isSubmitting, onSubmitChange]);
 
   return (
     <div className="space-y-12">
@@ -244,62 +242,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
             </div>
           </div>
 
-          {/* Address */}
-          <div className="space-y-2">
-            <label className="checkout-label block font-medium">Address</label>
-            <input
-              type="text"
-              placeholder="Street address, apartment, suite, etc."
-              value={shippingData.address}
-              onChange={(e) => updateShippingData('address', e.target.value)}
-              className={`checkout-input w-full px-4 py-3 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                errors.address ? 'border-red-500' : 'border-gray-300'
-              }`}
-              required
-            />
-            {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
-          </div>
-
-          {/* City and State */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="checkout-label block font-medium">City</label>
-              <input
-                type="text"
-                placeholder="City"
-                value={shippingData.city}
-                onChange={(e) => updateShippingData('city', e.target.value)}
-                className={`checkout-input w-full px-4 py-3 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                  errors.city ? 'border-red-500' : 'border-gray-300'
-                }`}
-                required
-              />
-              {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
-            </div>
-            <div className="space-y-2">
-              <label className="checkout-label block font-medium">State/Province</label>
-              <input
-                type="text"
-                placeholder="State/Province"
-                value={shippingData.state}
-                onChange={(e) => updateShippingData('state', e.target.value)}
-                className="checkout-input w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              />
-            </div>
-          </div>
-
-          {/* Postal Code */}
-          <div className="space-y-2">
-            <label className="checkout-label block font-medium">Postal Code (optional)</label>
-            <input
-              type="text"
-              placeholder="Postal Code"
-              value={shippingData.postalCode}
-              onChange={(e) => updateShippingData('postalCode', e.target.value)}
-              className="checkout-input w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-            />
-          </div>
-
           {/* Phone Number */}
           <div className="space-y-2">
             <label className="checkout-label block font-medium">Phone Number</label>
@@ -315,78 +257,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData }) => {
             />
             {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
           </div>
-        </div>
-
-        {/* Payment Section */}
-        <div className="space-y-6">
-          <h2 className="checkout-section-title text-xl font-bold">Payment</h2>
-
-          <div className="space-y-4">
-            <label className="checkout-label block font-medium">Payment Method</label>
-
-            {/* Stripe Payment Option */}
-            <label className="bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm cursor-pointer block">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start space-x-3">
-                    <input
-                      type="radio"
-                      name="payment_method"
-                      value="stripe"
-                      className="checkout-radio mt-1"
-                      checked={paymentMethod === "stripe"}
-                      onChange={() => setPaymentMethod("stripe")}
-                    />
-                    <div>
-                      <p className="checkout-label font-medium">Pay with Credit/Debit Card (Stripe)</p>
-                      <p className="checkout-input text-sm text-gray-600">Secure payment via Stripe Checkout</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-8 h-6 relative">
-                      <Image src="/images/MasterCard.svg" alt="Mastercard" fill style={{ objectFit: "contain" }} />
-                    </div>
-                    <div className="w-8 h-3 relative">
-                      <Image src="/images/Visa.svg" alt="Visa" fill style={{ objectFit: "contain" }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Stripe Information */}
-                {paymentMethod === "stripe" && (
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <p className="text-sm text-blue-800">
-                      <i className="fas fa-info-circle mr-2"></i>
-                      You will be securely redirected to Stripe to complete your payment.
-                      Your card details are never stored on our servers.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </label>
-          </div>
-        </div>
-
-        {/* Pay Now Button */}
-        <div className="pt-6">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="checkout-green-bg w-full mx-auto lg:mx-0 px-6 py-3 rounded-lg flex items-center justify-center space-x-2 text-black font-semibold hover:opacity-90 transition-opacity duration-200 bg-green-400 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Pay Now"
-          >
-            {isSubmitting ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
-                <span className="font-semibold">Processing...</span>
-              </>
-            ) : (
-              <>
-                <span className="font-semibold">Pay Now</span>
-                <i className="fas fa-arrow-right" />
-              </>
-            )}
-          </button>
         </div>
       </form>
     </div>

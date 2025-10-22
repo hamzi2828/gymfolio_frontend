@@ -62,8 +62,8 @@ class CheckoutService {
         fullName: customerInfo.fullName || `${customerInfo.firstName} ${customerInfo.lastName}`,
         email: customerInfo.email,
         phone: customerInfo.phone || customerInfo.phoneNumber,
-        address: customerInfo.address,
-        city: customerInfo.city,
+        address: customerInfo.address || '',
+        city: customerInfo.city || '',
         state: customerInfo.state || '',
         zipCode: customerInfo.zipCode || customerInfo.postalCode || '',
         country: customerInfo.country || 'United States'
@@ -151,8 +151,6 @@ class CheckoutService {
     if (!address.firstName?.trim()) errors.push('First name is required');
     if (!address.lastName?.trim()) errors.push('Last name is required');
     if (!address.country?.trim()) errors.push('Country is required');
-    if (!address.address?.trim()) errors.push('Address is required');
-    if (!address.city?.trim()) errors.push('City is required');
     if (!address.phoneNumber?.trim()) errors.push('Phone number is required');
 
     return {

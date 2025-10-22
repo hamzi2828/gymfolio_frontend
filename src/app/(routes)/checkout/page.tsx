@@ -16,6 +16,13 @@ const CheckoutPage = () => {
 
   const [loading, setLoading] = useState(true);
   const [packageData, setPackageData] = useState<Package | null>(null);
+  const [submitHandler, setSubmitHandler] = useState<(() => void) | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitChange = (handler: () => void, submitting: boolean) => {
+    setSubmitHandler(() => handler);
+    setIsSubmitting(submitting);
+  };
 
   useEffect(() => {
     const initCheckout = async () => {
@@ -94,9 +101,12 @@ const CheckoutPage = () => {
             <CheckoutForm
               onOrderCreate={handleOrderCreate}
               packageData={packageData}
+              onSubmitChange={handleSubmitChange}
             />
             <OrderSummary
               packageData={packageData}
+              onSubmit={submitHandler || undefined}
+              isSubmitting={isSubmitting}
             />
           </div>
         </div>

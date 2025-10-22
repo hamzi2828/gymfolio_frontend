@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { type Package } from '../../packages/services/packageService';
 
 interface OrderSummaryProps {
   packageData?: Package | null;
+  onSubmit?: () => void;
+  isSubmitting?: boolean;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
-  packageData
+  packageData,
+  onSubmit,
+  isSubmitting = false
 }) => {
   const [discountInput, setDiscountInput] = useState('');
   const [applyingDiscount, setApplyingDiscount] = useState(false);
@@ -34,7 +39,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   // Calculate totals based on checkout type
   let subtotalAmount = 0;
   if (isPackageCheckout && packageData) {
-    subtotalAmount = parseFloat(packageData.price);
+    // Remove commas and non-numeric characters except decimal point before parsing
+    const cleanPrice = packageData.price.replace(/[^\d.]/g, '');
+    subtotalAmount = parseFloat(cleanPrice) || 0;
   }
 
   const finalSubtotal = subtotalAmount;
@@ -99,27 +106,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
           </div>
 
-          {/* Discount Code Field */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="Discount code or gift card"
-                value={discountInput}
-                onChange={(e) => setDiscountInput(e.target.value)}
-                className="checkout-input w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                disabled={applyingDiscount}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={handleApplyDiscount}
-              disabled={applyingDiscount}
-              className="px-6 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors checkout-input duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {applyingDiscount ? 'APPLYING...' : 'APPLY'}
-            </button>
-          </div>
+
 
 
         </div>
@@ -147,6 +134,68 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 {packageData.currency} {finalTotal.toFixed(2)}
               </span>
             </div>
+          </div>
+
+          {/* Payment Section */}
+          <div className="pt-6 space-y-4">
+            <h3 className="checkout-section-title text-lg font-bold">Payment</h3>
+
+            {/* Stripe Payment Option */}
+            <div className="bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex items-center mt-1">
+                      <div className="w-4 h-4 rounded-full border-2 border-blue-600 bg-blue-600 flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-white"></div>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="checkout-label font-medium">Pay with Credit/Debit Card (Stripe)</p>
+                      <p className="checkout-input text-sm text-gray-600">Secure payment via Stripe Checkout</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-8 h-6 relative">
+                      <Image src="/images/MasterCard.svg" alt="Mastercard" fill style={{ objectFit: "contain" }} />
+                    </div>
+                    <div className="w-8 h-3 relative">
+                      <Image src="/images/Visa.svg" alt="Visa" fill style={{ objectFit: "contain" }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stripe Information */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <i className="fas fa-info-circle mr-2"></i>
+                    You will be securely redirected to Stripe to complete your payment.
+                    Your card details are never stored on our servers.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pay Now Button */}
+            <button
+              type="button"
+              onClick={onSubmit}
+              disabled={isSubmitting}
+              className="checkout-green-bg w-full px-6 py-3 rounded-lg flex items-center justify-center space-x-2 text-black font-semibold hover:opacity-90 transition-opacity duration-200 bg-green-400 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Pay Now"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                  <span className="font-semibold">Processing...</span>
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">Pay Now</span>
+                  <i className="fas fa-arrow-right" />
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
