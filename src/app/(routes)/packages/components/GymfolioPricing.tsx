@@ -232,7 +232,7 @@ const GymfolioPricing: React.FC = () => {
                 ].join(" ")}
               >
                 <Link
-                  href="/contact-us"
+                  href={`/checkout?packageId=${plan._id}`}
                   className="GymfolioPricing-cta inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#bee304] px-6 py-3 font-semibold text-black shadow-[4px_4px_12px_rgba(0,132,255,0.25)] transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                   aria-label={`Get started with ${plan.name} plan`}
                 >
