@@ -9,9 +9,10 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({ isForgot }) => {
   const handleGoogleLogin = () => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const returnUrl = encodeURIComponent('/auth/callback');
+    const platformType = 'gymfolio';
     const target = backendUrl
-      ? `${backendUrl}/auth/google?returnUrl=${returnUrl}`
-      : `/auth/google?returnUrl=${returnUrl}`;
+      ? `${backendUrl}/auth/google?returnUrl=${returnUrl}&platformType=${platformType}`
+      : `/auth/google?returnUrl=${returnUrl}&platformType=${platformType}`;
     window.location.href = target;
   };
 

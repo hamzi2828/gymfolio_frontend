@@ -81,20 +81,11 @@ class CheckoutService {
       const result = await response.json();
       console.log('- Package checkout session result:', result);
 
-      if (result.success) {
-        const stripe = await this.getStripe();
-        if (!stripe) {
-          throw new Error('Stripe not initialized');
-        }
-
-        // Redirect to Stripe checkout
-        const { error } = await stripe.redirectToCheckout({
-          sessionId: result.sessionId
-        });
-
-        if (error) {
-          throw new Error(error.message);
-        }
+      if (result.success && result.url) {
+        // Redirect to Stripe checkout URL
+        // Using direct URL redirect instead of deprecated stripe.redirectToCheckout()
+        window.location.href = result.url;
+        return;
       }
 
       throw new Error(result.message || 'Failed to create package checkout session');
