@@ -1,8 +1,13 @@
 "use client";
 import React, { useRef, useState } from "react";
 import Image from "next/image";
+import { GymClass } from "../../main/services/gymClassService";
 
-const GymClassDetailSection = () => {
+interface GymClassDetailSectionProps {
+  gymClass: GymClass;
+}
+
+const GymClassDetailSection: React.FC<GymClassDetailSectionProps> = ({ gymClass }) => {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const handleVideoToggle = () => {
@@ -75,7 +80,7 @@ const GymClassDetailSection = () => {
               <video
                 id="gymVideo"
                 className="absolute inset-0 w-full h-full object-cover"
-                poster="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                poster={gymClass.thumbnail || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"}
                 preload="metadata"
                 muted
                 onEnded={handleVideoEnded}
@@ -99,80 +104,90 @@ const GymClassDetailSection = () => {
               </button>
             </div>
 
-            {/* First Class Info */}
+            {/* Class Info */}
             <article className="space-y-8 hover:bg-white hover:bg-opacity-30 p-6 rounded-lg transition-all duration-300">
               <header className="space-y-4">
                 <h2 className="montserrat-bold text-2xl md:text-3xl lg:text-4xl leading-tight tracking-tight uppercase opacity-90 text-black hover:text-green-600 transition-colors duration-300">
-                  Body Building Class
+                  {gymClass.name}
                 </h2>
                 <p className="poppins-regular text-sm leading-relaxed gym-gray">
-                  Gym is very important to maintain our health luptas sit fugit,
-                  sed quia cuuntur magni dolores eos qui rat ione volupta pleasure
-                  rationally encounter consequences that are extremely pleasure
-                  rationally encounter that are extremely painful. Nor again is
-                  there anyone who loves or pursues or desires to obtain pain of
-                  itself, because it is pain, but because occasionally
-                  circumstances occur in which some great pleasure<br /><br />
-                  Gym is very important to maintain our health luptas sit fugit,
-                  sed quia cuuntur magni dolores eos qui rat ione volupta pleasure
-                  rationally encounter consequences that are extremely pleasure
-                  rationally encounter
+                  {gymClass.description || gymClass.shortDescription || 'No description available for this class.'}
                 </p>
               </header>
 
-              <ul className="space-y-4" role="list">
-                {[1, 2, 3].map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-3 hover:bg-green-50 p-2 rounded transition-all duration-200 hover:shadow-sm"
-                  >
-                    <span className="check-icon w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:scale-110 transition-transform duration-200">
-                      <i className="fas fa-check gym-green text-xs"></i>
-                    </span>
-                    <span className="inter-regular text-base leading-6 gym-gray flex-1">
-                      Access to all basic features
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </article>
+              {/* Features */}
+              {gymClass.features && gymClass.features.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="montserrat-bold text-xl text-black">Features</h3>
+                  <ul className="space-y-4" role="list">
+                    {gymClass.features.map((feature, index) => (
+                      <li
+                        key={index}
+                        className="flex items-start gap-3 hover:bg-green-50 p-2 rounded transition-all duration-200 hover:shadow-sm"
+                      >
+                        <span className="check-icon w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:scale-110 transition-transform duration-200">
+                          <i className="fas fa-check gym-green text-xs"></i>
+                        </span>
+                        <span className="inter-regular text-base leading-6 gym-gray flex-1">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-            {/* Second Class Info */}
-            <article className="space-y-8 hover:bg-white hover:bg-opacity-30 p-6 rounded-lg transition-all duration-300">
-              <header className="space-y-4">
-                <h2 className="montserrat-bold text-2xl md:text-3xl lg:text-4xl leading-tight tracking-tight uppercase opacity-90 text-black hover:text-green-600 transition-colors duration-300">
-                  Body Building Class
-                </h2>
-                <p className="poppins-regular text-sm leading-relaxed gym-gray">
-                  Gym is very important to maintain our health luptas sit fugit,
-                  sed quia cuuntur magni dolores eos qui rat ione volupta pleasure
-                  rationally encounter consequences that are extremely pleasure
-                  rationally encounter that are extremely painful. Nor again is
-                  there anyone who loves or pursues or desires to obtain pain of
-                  itself, because it is pain, but because occasionally
-                  circumstances occur in which some great pleasure<br /><br />
-                  Gym is very important to maintain our health luptas sit fugit,
-                  sed quia cuuntur magni dolores eos qui rat ione volupta pleasure
-                  rationally encounter consequences that are extremely pleasure
-                  rationally encounter
-                </p>
-              </header>
+              {/* Requirements */}
+              {gymClass.requirements && gymClass.requirements.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="montserrat-bold text-xl text-black">Requirements</h3>
+                  <ul className="space-y-4" role="list">
+                    {gymClass.requirements.map((requirement, index) => (
+                      <li
+                        key={index}
+                        className="flex items-start gap-3 hover:bg-green-50 p-2 rounded transition-all duration-200 hover:shadow-sm"
+                      >
+                        <span className="check-icon w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:scale-110 transition-transform duration-200">
+                          <i className="fas fa-check gym-green text-xs"></i>
+                        </span>
+                        <span className="inter-regular text-base leading-6 gym-gray flex-1">
+                          {requirement}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-              <ul className="space-y-4" role="list">
-                {[1, 2, 3].map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-3 hover:bg-green-50 p-2 rounded transition-all duration-200 hover:shadow-sm"
-                  >
-                    <span className="check-icon w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:scale-110 transition-transform duration-200">
-                      <i className="fas fa-check gym-green text-xs"></i>
-                    </span>
-                    <span className="inter-regular text-base leading-6 gym-gray flex-1">
-                      Access to all basic features
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              {/* Class Details */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {gymClass.duration && (
+                  <div className="space-y-2">
+                    <p className="poppins-medium text-xs text-[#85868b] uppercase">Duration</p>
+                    <p className="montserrat-bold text-lg text-black">{gymClass.duration} min</p>
+                  </div>
+                )}
+                {gymClass.difficulty && (
+                  <div className="space-y-2">
+                    <p className="poppins-medium text-xs text-[#85868b] uppercase">Difficulty</p>
+                    <p className="montserrat-bold text-lg text-black">{gymClass.difficulty}</p>
+                  </div>
+                )}
+                {gymClass.capacity && (
+                  <div className="space-y-2">
+                    <p className="poppins-medium text-xs text-[#85868b] uppercase">Capacity</p>
+                    <p className="montserrat-bold text-lg text-black">{gymClass.capacity} people</p>
+                  </div>
+                )}
+                {gymClass.price !== undefined && (
+                  <div className="space-y-2">
+                    <p className="poppins-medium text-xs text-[#85868b] uppercase">Price</p>
+                    <p className="montserrat-bold text-lg text-black">
+                      {gymClass.price === 0 ? 'Free' : `PKR ${gymClass.price}`}
+                    </p>
+                  </div>
+                )}
+              </div>
             </article>
           </main>
 
@@ -283,74 +298,76 @@ const GymClassDetailSection = () => {
         </div>
 
         {/* Class Schedule Table */}
-        <section className="py-8 md:py-16">
-          <div className="bg-black rounded-3xl border border-white border-opacity-20 p-6 md:p-12 lg:p-16 backdrop-blur-xl hover:border-opacity-40 transition-all duration-300">
-            <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start justify-center">
-              {/* Day Column */}
-              <div className="flex flex-col gap-2 flex-1">
-                <div className="flex flex-col gap-5 items-start justify-start w-full">
-                  <header className="flex flex-col gap-5 items-start justify-start w-full">
-                    <h3 className="montserrat-bold text-2xl lg:text-3xl leading-tight tracking-tight gym-green">
-                      Day
-                    </h3>
-                  </header>
+        {gymClass.schedule && gymClass.schedule.length > 0 && (
+          <section className="py-8 md:py-16">
+            <div className="bg-black rounded-3xl border border-white border-opacity-20 p-6 md:p-12 lg:p-16 backdrop-blur-xl hover:border-opacity-40 transition-all duration-300">
+              <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start justify-center">
+                {/* Day Column */}
+                <div className="flex flex-col gap-2 flex-1">
+                  <div className="flex flex-col gap-5 items-start justify-start w-full">
+                    <header className="flex flex-col gap-5 items-start justify-start w-full">
+                      <h3 className="montserrat-bold text-2xl lg:text-3xl leading-tight tracking-tight gym-green">
+                        Day
+                      </h3>
+                    </header>
 
-                  <div className="flex flex-col gap-6 items-start justify-start w-full">
-                    {['Monday', 'Tuesday', 'Wednesday', 'Friday'].map((day) => (
-                      <div key={day} className="flex flex-col gap-4 items-start justify-start w-full">
-                        <div className="poppins-medium text-sm leading-6 text-white w-full hover:text-green-100 transition-colors duration-200 cursor-pointer hover:bg-white hover:bg-opacity-5 p-2 rounded">
-                          {day}
+                    <div className="flex flex-col gap-6 items-start justify-start w-full">
+                      {gymClass.schedule.map((schedule, index) => (
+                        <div key={index} className="flex flex-col gap-4 items-start justify-start w-full">
+                          <div className="poppins-medium text-sm leading-6 text-white w-full hover:text-green-100 transition-colors duration-200 cursor-pointer hover:bg-white hover:bg-opacity-5 p-2 rounded">
+                            {schedule.day}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Time Column */}
-              <div className="flex flex-col gap-2 flex-1">
-                <div className="flex flex-col gap-5 items-start justify-start w-full">
-                  <header className="flex flex-col gap-5 items-start justify-start w-full">
-                    <h3 className="montserrat-bold text-2xl lg:text-3xl leading-tight tracking-tight gym-green">
-                      Time
-                    </h3>
-                  </header>
+                {/* Time Column */}
+                <div className="flex flex-col gap-2 flex-1">
+                  <div className="flex flex-col gap-5 items-start justify-start w-full">
+                    <header className="flex flex-col gap-5 items-start justify-start w-full">
+                      <h3 className="montserrat-bold text-2xl lg:text-3xl leading-tight tracking-tight gym-green">
+                        Time
+                      </h3>
+                    </header>
 
-                  <div className="flex flex-col gap-6 items-start justify-start w-full">
-                    {[1, 2, 3, 4].map((item) => (
-                      <div key={item} className="flex flex-col gap-4 items-start justify-start w-full">
-                        <div className="poppins-medium text-sm leading-6 text-white w-full hover:text-green-100 transition-colors duration-200 cursor-pointer hover:bg-white hover:bg-opacity-5 p-2 rounded">
-                          09:00 to 10:30 am
+                    <div className="flex flex-col gap-6 items-start justify-start w-full">
+                      {gymClass.schedule.map((schedule, index) => (
+                        <div key={index} className="flex flex-col gap-4 items-start justify-start w-full">
+                          <div className="poppins-medium text-sm leading-6 text-white w-full hover:text-green-100 transition-colors duration-200 cursor-pointer hover:bg-white hover:bg-opacity-5 p-2 rounded">
+                            {schedule.startTime} to {schedule.endTime}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Instructor Column */}
-              <div className="flex flex-col gap-2 flex-1">
-                <div className="flex flex-col gap-5 items-start justify-start w-full">
-                  <header className="flex flex-col gap-5 items-start justify-start w-full">
-                    <h3 className="montserrat-bold text-2xl lg:text-3xl leading-tight tracking-tight gym-green">
-                      Instructor
-                    </h3>
-                  </header>
+                {/* Instructor Column */}
+                <div className="flex flex-col gap-2 flex-1">
+                  <div className="flex flex-col gap-5 items-start justify-start w-full">
+                    <header className="flex flex-col gap-5 items-start justify-start w-full">
+                      <h3 className="montserrat-bold text-2xl lg:text-3xl leading-tight tracking-tight gym-green">
+                        Instructor
+                      </h3>
+                    </header>
 
-                  <div className="flex flex-col gap-6 items-start justify-start w-full">
-                    {['Robert Cristopher', 'Nikolus Smith', 'Robert Cristopher', 'Nikolus Smith'].map((instructor, index) => (
-                      <div key={index} className="flex flex-col gap-4 items-start justify-start w-full">
-                        <div className="poppins-medium text-sm leading-6 text-white w-full hover:text-green-100 transition-colors duration-200 cursor-pointer hover:bg-white hover:bg-opacity-5 p-2 rounded">
-                          {instructor}
+                    <div className="flex flex-col gap-6 items-start justify-start w-full">
+                      {gymClass.schedule.map((schedule, index) => (
+                        <div key={index} className="flex flex-col gap-4 items-start justify-start w-full">
+                          <div className="poppins-medium text-sm leading-6 text-white w-full hover:text-green-100 transition-colors duration-200 cursor-pointer hover:bg-white hover:bg-opacity-5 p-2 rounded">
+                            {schedule.instructorName || schedule.instructor || 'TBA'}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </section>
     </div>
   );

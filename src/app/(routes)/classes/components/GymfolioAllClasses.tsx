@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { gymClassService, GymClass } from "../../main/services/gymClassService";
 
@@ -32,10 +31,6 @@ const GymfolioAllClasses: React.FC<GymfolioAllClassesProps> = ({ onClassClick })
       setError(null);
       const data = await gymClassService.getActiveClasses();
       setClassesData(data);
-      // Set the first class as default selected
-      if (data.length > 0 && onClassClick) {
-        onClassClick(data[0]);
-      }
     } catch (err) {
       console.error("Error fetching gym classes:", err);
       setError(err instanceof Error ? err.message : "Failed to load classes");
@@ -43,7 +38,7 @@ const GymfolioAllClasses: React.FC<GymfolioAllClassesProps> = ({ onClassClick })
     } finally {
       setLoading(false);
     }
-  }, [onClassClick]);
+  }, []);
 
   useEffect(() => {
     fetchClasses();
@@ -53,8 +48,6 @@ const GymfolioAllClasses: React.FC<GymfolioAllClassesProps> = ({ onClassClick })
     e.preventDefault();
     if (onClassClick) {
       onClassClick(gymClass);
-      // Scroll to GymfolioClass section
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

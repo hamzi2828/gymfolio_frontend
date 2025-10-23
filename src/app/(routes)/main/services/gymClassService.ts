@@ -132,6 +132,34 @@ export const gymClassService = {
   },
 
   /**
+   * Get a single gym class by ID
+   * @param id - Class ID
+   */
+  async getClassById(id: string): Promise<GymClass> {
+    try {
+      const response = await axios.get<{ success: boolean; message: string; data: GymClass }>(
+        `${API_BASE_URL}/gym-classes/${id}`
+      );
+
+      if (!response.data.success || !response.data.data) {
+        throw new Error(response.data.message || 'Failed to fetch class');
+      }
+
+      return {
+        ...response.data.data,
+        thumbnail: this.getAbsoluteImageUrl(response.data.data.thumbnail),
+        gallery: response.data.data.gallery?.map(img => this.getAbsoluteImageUrl(img))
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error fetching class:', error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || 'Failed to fetch class');
+      }
+      throw error;
+    }
+  },
+
+  /**
    * Get a single gym class by slug
    * @param slug - Class slug
    */
