@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import "@fortawesome/fontawesome-free/css/all.css";
@@ -9,7 +9,7 @@ import OrderSummary from "./components/OrderSummary";
 import { isAuthenticated } from "../../../helper/helper";
 import { packageService, type Package } from "../packages/services/packageService";
 
-const CheckoutPage = () => {
+const CheckoutPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const packageId = searchParams.get('packageId');
@@ -112,6 +112,20 @@ const CheckoutPage = () => {
         </div>
       </section>
     </main>
+  );
+};
+
+const CheckoutPage = () => {
+  return (
+    <Suspense fallback={
+      <main className="pt-20">
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#91b200]"></div>
+        </div>
+      </main>
+    }>
+      <CheckoutPageContent />
+    </Suspense>
   );
 };
 

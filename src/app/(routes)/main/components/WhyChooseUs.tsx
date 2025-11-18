@@ -1,8 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 
-interface WhyChooseUsProps {}
-
-const WhyChooseUs: React.FC<WhyChooseUsProps> = () => {
+const WhyChooseUs: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = 3;
 

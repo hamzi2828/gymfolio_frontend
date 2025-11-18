@@ -51,9 +51,10 @@ const Newsletter: React.FC<NewsletterProps> = ({
         setMessage('');
       }, 5000);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIsSuccess(false);
-      setMessage(error.message || 'Failed to subscribe. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to subscribe. Please try again.';
+      setMessage(errorMessage);
 
       // Hide error message after 5 seconds
       setTimeout(() => {
@@ -75,7 +76,7 @@ const Newsletter: React.FC<NewsletterProps> = ({
             Welcome to Our Community!
           </h3>
           <p className="text-gray-300 mb-6">
-            Thank you for subscribing! You'll receive our latest fitness tips and workout routines in your inbox.
+            Thank you for subscribing! You&apos;ll receive our latest fitness tips and workout routines in your inbox.
           </p>
           <button
             onClick={() => setIsSubscribed(false)}

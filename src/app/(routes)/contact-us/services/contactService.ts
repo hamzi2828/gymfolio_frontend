@@ -107,30 +107,32 @@ export const contactService = {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting contact form:', error);
 
       // Handle different types of errors
-      if (error.response) {
-        // Server responded with error status
-        return {
-          success: false,
-          message: error.response.data?.message || 'Failed to submit contact form',
-          errors: error.response.data?.errors
-        };
-      } else if (error.request) {
-        // Network error
-        return {
-          success: false,
-          message: 'Network error. Please check your connection and try again.'
-        };
-      } else {
-        // Other error
-        return {
-          success: false,
-          message: 'An unexpected error occurred. Please try again.'
-        };
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // Server responded with error status
+          return {
+            success: false,
+            message: error.response.data?.message || 'Failed to submit contact form',
+            errors: error.response.data?.errors
+          };
+        } else if (error.request) {
+          // Network error
+          return {
+            success: false,
+            message: 'Network error. Please check your connection and try again.'
+          };
+        }
       }
+
+      // Other error
+      return {
+        success: false,
+        message: 'An unexpected error occurred. Please try again.'
+      };
     }
   },
 

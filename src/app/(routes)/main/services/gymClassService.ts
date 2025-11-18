@@ -32,6 +32,8 @@ export interface GymClass {
   rating?: number;
   reviewsCount?: number;
   enrolledCount?: number;
+  videoUrl?: string;
+  videoPoster?: string;
   createdAt?: string;
   updatedAt?: string;
 }

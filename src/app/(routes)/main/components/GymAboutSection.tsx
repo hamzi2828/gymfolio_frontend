@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Link from "next/link";
 import "@fortawesome/fontawesome-free/css/all.css";
 import Image from "next/image";
 
@@ -60,7 +59,7 @@ const GymAboutSection = () => {
             </ul>
 
             <button className="hero-cta-button">
-              <span className="hero-cta-text">Let's Start</span>
+              <span className="hero-cta-text">Let&apos;s Start</span>
               <i className="fas fa-arrow-right"></i>
             </button>
           </article>
@@ -81,7 +80,7 @@ const GymAboutSection = () => {
           <article className="flex-1 space-y-8 lg:pl-8 xl:pl-16 z-9 relative">
             <header className="space-y-4  for-mobile-center">
               <h2 className="gymfolio3-main-title text-2xl md:text-3xl  font-bold text-black uppercase leading-tight opacity-90">
-                Body's of & Strength
+                Body&apos;s of & Strength
               </h2>
               <p className="gymfolio3-description-text text-gray-600 text-sm md:text-base leading-relaxed">
                 Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean

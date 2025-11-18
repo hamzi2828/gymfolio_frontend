@@ -34,6 +34,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ packageData, onSubmitChange
     country: '',
     firstName: '',
     lastName: '',
+    address: '',
+    city: '',
     phoneNumber: ''
   });
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { useSearchParams } from "next/navigation";
 import GymClassDetailSection from "./components/GymClassDetailSection";
@@ -8,7 +8,7 @@ import HeroAbout from "../about-us/components/HeroAbout";
 import GymTrainersSection from "./components/GymTrainersSection";
 import { gymClassService, GymClass } from "../main/services/gymClassService";
 
-const ClassDetail = () => {
+const ClassDetailContent = () => {
   const searchParams = useSearchParams();
   const classId = searchParams.get('id');
   const [selectedClass, setSelectedClass] = useState<GymClass | null>(null);
@@ -68,6 +68,20 @@ const ClassDetail = () => {
 <GymTrainersSection />
         <ContactSection />
     </main>
+  );
+};
+
+const ClassDetail = () => {
+  return (
+    <Suspense fallback={
+      <main className="pt-20">
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#91b200]"></div>
+        </div>
+      </main>
+    }>
+      <ClassDetailContent />
+    </Suspense>
   );
 };
 

@@ -94,6 +94,10 @@ export const featuredCategoriesService = {
   // Fallback method if the new API endpoint doesn't exist yet
   // This will fetch categories and products separately (current implementation)
   async getFeaturedCategoriesWithProductsFallback(): Promise<FeaturedCategoryWithProducts[]> {
+    // Fallback method is not available - admin services are not implemented
+    throw new Error('Fallback method not available. Please ensure the main API endpoint is working.');
+
+    /* Original implementation - disabled due to missing dependencies
     try {
       // Import services dynamically to avoid circular dependencies
       const { categoryService } = await import('../../admin/products/services/categoryService');
@@ -137,6 +141,7 @@ export const featuredCategoriesService = {
       console.error('Error in fallback method:', err);
       throw err;
     }
+    */
   },
 
   // Smart method that tries the new API first, falls back to old method
