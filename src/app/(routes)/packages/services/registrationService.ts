@@ -30,7 +30,7 @@ export const registrationService = {
   async submitRegistration(registrationData: RegistrationInput): Promise<Registration> {
     try {
       const response = await axios.post<ApiResponse<Registration>>(
-        `${API_BASE_URL}/package-registrations`,
+        `${API_BASE_URL}/api/gymfolio/package-registrations`,
         registrationData
       );
 

@@ -52,8 +52,8 @@ export const gymClassService = {
   async getActiveClasses(limit?: number): Promise<GymClass[]> {
     try {
       const url = limit
-        ? `${API_BASE_URL}/gym-classes/active?limit=${limit}`
-        : `${API_BASE_URL}/gym-classes/active`;
+        ? `${API_BASE_URL}/api/gymfolio/gym-classes/active?limit=${limit}`
+        : `${API_BASE_URL}/api/gymfolio/gym-classes/active`;
 
       const response = await axios.get<GymClassesResponse>(url);
 
@@ -84,7 +84,7 @@ export const gymClassService = {
   async getFeaturedClasses(): Promise<GymClass[]> {
     try {
       const response = await axios.get<GymClassesResponse>(
-        `${API_BASE_URL}/gym-classes/featured`
+        `${API_BASE_URL}/api/gymfolio/gym-classes/featured`
       );
 
       if (!response.data.success || !response.data.data) {
@@ -112,7 +112,7 @@ export const gymClassService = {
   async getClassesByCategory(category: string): Promise<GymClass[]> {
     try {
       const response = await axios.get<GymClassesResponse>(
-        `${API_BASE_URL}/gym-classes/category/${encodeURIComponent(category)}`
+        `${API_BASE_URL}/api/gymfolio/gym-classes/category/${encodeURIComponent(category)}`
       );
 
       if (!response.data.success || !response.data.data) {
@@ -140,7 +140,7 @@ export const gymClassService = {
   async getClassById(id: string): Promise<GymClass> {
     try {
       const response = await axios.get<{ success: boolean; message: string; data: GymClass }>(
-        `${API_BASE_URL}/gym-classes/${id}`
+        `${API_BASE_URL}/api/gymfolio/gym-classes/${id}`
       );
 
       if (!response.data.success || !response.data.data) {
@@ -168,7 +168,7 @@ export const gymClassService = {
   async getClassBySlug(slug: string): Promise<GymClass> {
     try {
       const response = await axios.get<{ success: boolean; message: string; data: GymClass }>(
-        `${API_BASE_URL}/gym-classes/slug/${slug}`
+        `${API_BASE_URL}/api/gymfolio/gym-classes/slug/${slug}`
       );
 
       if (!response.data.success || !response.data.data) {

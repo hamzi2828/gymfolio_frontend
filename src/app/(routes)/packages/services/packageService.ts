@@ -30,7 +30,7 @@ export const packageService = {
    */
   async getActivePackages(): Promise<Package[]> {
     try {
-      const response = await axios.get<ApiResponse<Package[]>>(`${API_BASE_URL}/packages/active`);
+      const response = await axios.get<ApiResponse<Package[]>>(`${API_BASE_URL}/api/gymfolio/packages/active`);
 
       if (!response.data.success) {
         throw new Error(response.data.message || 'Failed to fetch packages');

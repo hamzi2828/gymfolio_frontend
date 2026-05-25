@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'other-levels.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+      },
     ],
     // Disable image optimization in development for faster builds
     unoptimized: process.env.NODE_ENV !== 'production',

@@ -45,7 +45,7 @@ export const trainerService = {
   async getActiveTrainers(limit: number = 4): Promise<Trainer[]> {
     try {
       const response = await axios.get<TrainersResponse>(
-        `${API_BASE_URL}/trainers/active?limit=${limit}&isFeatured=true`
+        `${API_BASE_URL}/api/gymfolio/trainers/active?limit=${limit}&isFeatured=true`
       );
 
       if (!response.data.success || !response.data.data) {
@@ -81,7 +81,7 @@ export const trainerService = {
   async getFeaturedTrainers(): Promise<Trainer[]> {
     try {
       const response = await axios.get<TrainersResponse>(
-        `${API_BASE_URL}/trainers/featured`
+        `${API_BASE_URL}/api/gymfolio/trainers/featured`
       );
 
       if (!response.data.success || !response.data.data) {
@@ -115,7 +115,7 @@ export const trainerService = {
   async getTrainerBySlug(slug: string): Promise<Trainer> {
     try {
       const response = await axios.get<{ success: boolean; message: string; data: Trainer }>(
-        `${API_BASE_URL}/trainers/slug/${slug}`
+        `${API_BASE_URL}/api/gymfolio/trainers/slug/${slug}`
       );
 
       if (!response.data.success || !response.data.data) {

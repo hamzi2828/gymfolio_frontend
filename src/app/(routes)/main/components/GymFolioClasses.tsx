@@ -248,7 +248,7 @@ const GymFolioClasses = () => {
     {classesData.map((classItem) => (
       <Link
         key={classItem._id}
-        href={classItem.slug ? `/classes/${classItem.slug}` : `#${classItem._id}`}
+        href={`/classdetail?id=${classItem._id}`}
         className="gymfolio4-carousel-card group"
       >
         <div
